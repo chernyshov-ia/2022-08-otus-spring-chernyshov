@@ -28,15 +28,23 @@ public class CsvTestLoaderStrategy implements TestLoaderStrategy {
     public List<? extends Question> loadQuestions() {
         var questions = new ArrayList<Question>();
 
-        try (var stream = CsvTestLoaderStrategy.class.getClassLoader().getResourceAsStream(fileName);
-             var streamReader = new InputStreamReader(stream);
-             CSVReader reader = new CSVReader(streamReader)) {
-            List<String[]> r = reader.readAll();
-            var map = r.stream().filter(x -> x.length == 3).collect(Collectors.groupingBy(x -> x[0]));
-            for (var e : map.entrySet()) {
-                List<Answer> answers = e.getValue().stream().map(this::mapToAnswer).collect(Collectors.toList());
-                questions.add(new Question(e.getKey(), answers));
+        try ( var stream = CsvTestLoaderStrategy.class.getClassLoader().getResourceAsStream(fileName) ) {
+
+            if ( stream == null ) {
+                throw new RuntimeException("Ресурс не найден");
             }
+
+            try ( var streamReader = new InputStreamReader(stream);
+                  CSVReader reader = new CSVReader(streamReader))
+            {
+                List<String[]> r = reader.readAll();
+                var map = r.stream().filter(x -> x.length == 3).collect(Collectors.groupingBy(x -> x[0]));
+                for (var e : map.entrySet()) {
+                    List<Answer> answers = e.getValue().stream().map(this::mapToAnswer).collect(Collectors.toList());
+                    questions.add(new Question(e.getKey(), answers));
+                }
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("Не могу загрузить тесты", e);
         }
