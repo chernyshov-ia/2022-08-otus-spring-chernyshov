@@ -1,2 +1,2 @@
-# spring-2022-08
+# 2022-08-otus-spring-chernyshov
 Spring
