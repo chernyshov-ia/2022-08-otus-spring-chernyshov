@@ -1,6 +1,5 @@
 package ru.otus.testing.domain;
 
-import org.springframework.stereotype.Component;
 import ru.otus.testing.TestLoaderStrategy;
 
 import java.util.List;
