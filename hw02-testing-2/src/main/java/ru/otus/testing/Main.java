@@ -9,7 +9,7 @@ public class Main {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext(Main.class);
 
         Test test = context.getBean( Test.class );
-        test.printQuestions();
+//        test.printQuestions();
 
         context.close();
     }
