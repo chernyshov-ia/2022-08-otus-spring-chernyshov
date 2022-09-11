@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Question {
     final private String text;
-    final private List<? extends Answer> answers;
+    final private List<Answer> answers;
 
-    public Question(String text, List<? extends Answer> answers) {
+    public Question(String text, List<Answer> answers) {
         this.text = text;
         this.answers = answers;
     }

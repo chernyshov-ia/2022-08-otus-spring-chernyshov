@@ -1,43 +1,16 @@
 package ru.otus.testing.service;
 
 import org.springframework.stereotype.Service;
-import ru.otus.testing.TestFactory;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.Test;
+import ru.otus.testing.domain.TestResult;
 
 @Service
 public class TestRunnerServiceImpl implements TestRunnerService {
-
-    private static final int SUCCESS_THRESHOLD_PERCENTS = 80;
-
     private final IOService ioService;
-    private final TestFactory testFactory;
 
-    public TestRunnerServiceImpl(IOService ioService, TestFactory testFactory) {
+    public TestRunnerServiceImpl(IOService ioService, TestLoader testLoader) {
         this.ioService = ioService;
-        this.testFactory = testFactory;
-    }
-
-
-    private int readAnswer(int maxAnswerNumber) {
-        int response;
-        boolean received;
-
-        do {
-            try {
-                response = ioService.readIntWithPrompt("Enter number of answer: ");
-            } catch (NumberFormatException e) {
-                response = 0;
-            }
-            received = response >= 1 && response <= maxAnswerNumber;
-
-            if (!received) {
-                ioService.outputString("No such answer number! Try again.");
-            }
-
-        } while (!received);
-
-        return response;
     }
 
     private boolean askQuestion(Question question) {
@@ -48,30 +21,20 @@ public class TestRunnerServiceImpl implements TestRunnerService {
             ioService.outputString(String.format("  %d. %s", i + 1, question.getAnswers().get(i).getText()));
         }
 
-        ioService.outputString("");
-
-        response = readAnswer(question.getAnswers().size());
-
-        boolean isRight = response > 0 && response <= question.getAnswers().size() && question.getAnswers().get(response - 1).isRight();
-
-        if (isRight) {
-            ioService.outputString("It's right!");
-        } else {
-            ioService.outputString("It's wrong!");
+        try {
+            response = ioService.readIntWithPrompt("Enter number of answer: ");
+        } catch (NumberFormatException e) {
+            response = -1;
         }
 
-        ioService.outputString("");
-
-        return isRight;
+        return response > 0 && response <= question.getAnswers().size() && question.getAnswers().get(response - 1).isRight();
     }
 
-    private void performTest(Test test) {
+    @Override
+    public TestResult perform(Test test) {
         int rightAnswers = 0;
 
-        ioService.outputString(test.getDescription());
-        ioService.outputString("");
-
-        String studentName = ioService.readStringWithPrompt("Enter student name: ");
+        ioService.outputString("Let's start: " + test.getDescription());
 
         for (Question question : test.getQuestions()) {
             if (askQuestion(question)) {
@@ -79,25 +42,6 @@ public class TestRunnerServiceImpl implements TestRunnerService {
             }
         }
 
-        int successPercents = (int) Math.round(100 * rightAnswers / (test.getQuestions().size() * 1.00));
-        ioService.outputString(String.format("You result: %d%%", successPercents));
-
-
-        if(successPercents >= SUCCESS_THRESHOLD_PERCENTS) {
-            ioService.outputString(studentName + " passed the test!");
-        } else {
-            ioService.outputString(studentName + " failed the test!");
-        }
-    }
-
-
-    @Override
-    public void perform() {
-        try {
-            var test = testFactory.create();
-            performTest(test);
-        } catch (Exception e) {
-            ioService.outputString("Someone went wrong: " + e.getMessage() );
-        }
+        return new TestResult(rightAnswers, test.getQuestions().size());
     }
 }

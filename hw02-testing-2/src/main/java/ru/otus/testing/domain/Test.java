@@ -7,7 +7,7 @@ public class Test {
     private final String description;
     private final List<? extends Question> questions;
 
-    public Test(String description, List<? extends Question> questions) {
+    public Test(String description, List<Question> questions) {
         this.description = description;
         this.questions = Collections.unmodifiableList(questions);
     }

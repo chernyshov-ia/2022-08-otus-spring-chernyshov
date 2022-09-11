@@ -1,4 +1,4 @@
-package ru.otus.testing;
+package ru.otus.testing.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -15,18 +15,35 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class TestFactoryCsv implements TestFactory {
+public class TestLoaderCsv implements TestLoader {
     private final String sourceFilename;
 
-    public TestFactoryCsv(@Value("${app.test.source.filename}") String sourceFilename) {
+    public TestLoaderCsv(@Value("${app.test.source.filename}") String sourceFilename) {
         if (sourceFilename == null) {
             throw new IllegalArgumentException();
         }
         this.sourceFilename = sourceFilename;
     }
 
+    @Override
+    public Test load() {
+        try {
+            var csv = loadCsv();
+            var description = extractDescription(csv);
+            var questions = extractQuestions(csv);
+
+            if (questions.size() == 0) {
+                throw new RuntimeException("Questions and answers not found in resource");
+            }
+
+            return new Test(description, questions);
+        } catch (Throwable e) {
+            throw new TestInstantiationException("can't instantiate Test", e);
+        }
+    }
+
     private List<String[]> loadCsv() {
-        try ( var stream = TestFactoryCsv.class.getClassLoader().getResourceAsStream(sourceFilename) ) {
+        try ( var stream = TestLoaderCsv.class.getClassLoader().getResourceAsStream(sourceFilename) ) {
 
             if ( stream == null ) {
                 throw new RuntimeException("Resource not found");
@@ -34,8 +51,7 @@ public class TestFactoryCsv implements TestFactory {
 
             try (var streamReader = new InputStreamReader(stream);
                  CSVReader reader = new CSVReader(streamReader)) {
-                List<String[]> r = reader.readAll();
-                return r;
+                return reader.readAll();
             }
 
         } catch (IOException | CsvException e) {
@@ -70,26 +86,5 @@ public class TestFactoryCsv implements TestFactory {
         }
 
         return questions;
-    }
-
-    private Test load() {
-        var csv = loadCsv();
-        var description = extractDescription(csv);
-        var questions = extractQuestions(csv);
-
-        if (questions.size() == 0) {
-            throw new RuntimeException("Questions and answers not found in resource");
-        }
-
-        return new Test(description, questions);
-    }
-
-    @Override
-    public Test create() {
-        try {
-            return load();
-        } catch (Throwable e) {
-            throw new TestInstantiationException("can't instantiate Test", e);
-        }
     }
 }
