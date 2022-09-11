@@ -9,7 +9,7 @@ import ru.otus.testing.domain.TestResult;
 public class TestRunnerServiceImpl implements TestRunnerService {
     private final IOService ioService;
 
-    public TestRunnerServiceImpl(IOService ioService, TestLoader testLoader) {
+    public TestRunnerServiceImpl(IOService ioService) {
         this.ioService = ioService;
     }
 
