@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class TestFactoryCsv implements TestFactory {
     private final String sourceFilename;
 
-    public TestFactoryCsv(@Value("$(app.test.source.filename:questions.csv)") String sourceFilename) {
+    public TestFactoryCsv(@Value("${app.test.source.filename}") String sourceFilename) {
         if (sourceFilename == null) {
             throw new IllegalArgumentException();
         }

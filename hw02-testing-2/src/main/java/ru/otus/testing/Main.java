@@ -1,15 +1,17 @@
 package ru.otus.testing;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.otus.testing.domain.Test;
+import org.springframework.context.annotation.ComponentScan;
+import ru.otus.testing.service.TestRunnerService;
 
+@ComponentScan
 public class Main {
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext(Main.class);
 
-        Test test = context.getBean( Test.class );
-//        test.printQuestions();
+        TestRunnerService runner = context.getBean( TestRunnerService.class );
+        runner.perform();
 
         context.close();
     }

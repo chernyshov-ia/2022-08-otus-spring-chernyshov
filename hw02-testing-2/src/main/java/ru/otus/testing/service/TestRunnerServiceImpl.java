@@ -45,7 +45,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
         int response;
         for (int i = 0; i < question.getAnswers().size(); i++) {
-            ioService.outputString(String.format("  %d. %s\n", i + 1, question.getAnswers().get(i).getText()));
+            ioService.outputString(String.format("  %d. %s", i + 1, question.getAnswers().get(i).getText()));
         }
 
         ioService.outputString("");
@@ -71,6 +71,8 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         ioService.outputString(test.getDescription());
         ioService.outputString("");
 
+        String studentName = ioService.readStringWithPrompt("Enter student name: ");
+
         for (Question question : test.getQuestions()) {
             if (askQuestion(question)) {
                 rightAnswers++;
@@ -80,17 +82,22 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         int successPercents = (int) Math.round(100 * rightAnswers / (test.getQuestions().size() * 1.00));
         ioService.outputString(String.format("You result: %d%%", successPercents));
 
+
         if(successPercents >= SUCCESS_THRESHOLD_PERCENTS) {
-            ioService.outputString("Test is passed!");
+            ioService.outputString(studentName + " passed the test!");
         } else {
-            ioService.outputString("Test is failed!");
+            ioService.outputString(studentName + " failed the test!");
         }
     }
 
 
     @Override
     public void perform() {
-        var test = testFactory.create();
-        performTest(test);
+        try {
+            var test = testFactory.create();
+            performTest(test);
+        } catch (Exception e) {
+            ioService.outputString("Someone went wrong: " + e.getMessage() );
+        }
     }
 }

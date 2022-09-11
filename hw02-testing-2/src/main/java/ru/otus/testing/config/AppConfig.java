@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import ru.otus.testing.service.IOService;
 import ru.otus.testing.service.IOServiceStreams;
 
+@PropertySource("classpath:application.properties")
 @Configuration
 public class AppConfig {
     @Bean
