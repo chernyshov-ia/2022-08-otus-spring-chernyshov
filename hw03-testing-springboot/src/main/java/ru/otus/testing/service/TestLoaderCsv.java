@@ -2,8 +2,8 @@ package ru.otus.testing.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
@@ -18,11 +18,8 @@ import java.util.stream.Collectors;
 public class TestLoaderCsv implements TestLoader {
     private final String sourceFilename;
 
-    public TestLoaderCsv(@Value("${app.source.filename}") String sourceFilename) {
-        if (sourceFilename == null) {
-            throw new IllegalArgumentException();
-        }
-        this.sourceFilename = sourceFilename;
+    public TestLoaderCsv(AppProps appProps) {
+        this.sourceFilename = appProps.getFilename();
     }
 
     @Override

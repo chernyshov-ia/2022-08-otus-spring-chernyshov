@@ -1,3 +1,8 @@
-app:
-  source:
-    filename: questions.csv
+spring:
+  messages:
+    basename: "i18n/appmessages"
+    encoding: "UTF-8"
+
+application:
+  filename: questions.csv
+  locale: ru_RU

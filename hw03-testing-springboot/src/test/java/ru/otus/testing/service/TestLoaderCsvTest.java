@@ -1,9 +1,7 @@
 package ru.otus.testing.service;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.otus.testing.config.AppProps;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +10,9 @@ class TestLoaderCsvTest {
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var loader = new TestLoaderCsv(CSV_FILE_1);
+        var props  = new AppProps();
+        props.setFilename(CSV_FILE_1);
+        var loader = new TestLoaderCsv(props);
         var test = loader.load();
         assertAll(
                 () -> assertNotNull(test),
