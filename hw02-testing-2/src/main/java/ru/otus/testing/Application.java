@@ -1,7 +1,7 @@
 package ru.otus.testing;
 
 import org.springframework.stereotype.Component;
-import ru.otus.testing.domain.Test;
+import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
 import ru.otus.testing.service.IOService;
 import ru.otus.testing.service.TestLoader;
@@ -21,7 +21,7 @@ public class Application {
 
     public void run() {
         String studentName = ioService.readStringWithPrompt("Enter you name: ");
-        Test test = testLoader.load();
+        TestData test = testLoader.load();
         TestResult result = testRunnerService.perform(test);
         outputTestResult(studentName, result);
     }

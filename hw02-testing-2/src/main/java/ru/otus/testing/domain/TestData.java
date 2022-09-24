@@ -3,11 +3,11 @@ package ru.otus.testing.domain;
 import java.util.Collections;
 import java.util.List;
 
-public class Test {
+public class TestData {
     private final String description;
-    private final List<? extends Question> questions;
+    private final List<Question> questions;
 
-    public Test(String description, List<Question> questions) {
+    public TestData(String description, List<Question> questions) {
         this.description = description;
         this.questions = Collections.unmodifiableList(questions);
     }
@@ -16,7 +16,15 @@ public class Test {
         return description;
     }
 
-    public List<? extends Question> getQuestions() {
+    public Question getQuestion(int index) {
+        return questions.get(index);
+    }
+
+    public int getQuestionsCount() {
+        return questions.size();
+    }
+
+    public List<Question> getQuestions() {
         return questions;
     }
 }

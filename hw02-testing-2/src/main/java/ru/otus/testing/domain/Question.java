@@ -16,7 +16,11 @@ public class Question {
         return text;
     }
 
-    public List<? extends Answer> getAnswers() {
-        return Collections.unmodifiableList(answers);
+    public int getAnswersCount() {
+        return answers.size();
+    }
+
+    public Answer getAnswer(int index) {
+        return answers.get(index);
     }
 }

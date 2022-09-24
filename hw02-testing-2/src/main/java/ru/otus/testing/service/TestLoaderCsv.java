@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
-import ru.otus.testing.domain.Test;
+import ru.otus.testing.domain.TestData;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +26,7 @@ public class TestLoaderCsv implements TestLoader {
     }
 
     @Override
-    public Test load() {
+    public TestData load() {
         try {
             var csv = loadCsv();
             var description = extractDescription(csv);
@@ -36,7 +36,7 @@ public class TestLoaderCsv implements TestLoader {
                 throw new RuntimeException("Questions and answers not found in resource");
             }
 
-            return new Test(description, questions);
+            return new TestData(description, questions);
         } catch (Throwable e) {
             throw new TestInstantiationException("can't instantiate Test", e);
         }
