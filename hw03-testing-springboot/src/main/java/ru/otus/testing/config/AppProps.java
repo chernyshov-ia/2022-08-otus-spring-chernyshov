@@ -10,6 +10,8 @@ public class AppProps {
 
     private String filename;
 
+    private int passThresholdPercents;
+
     public String getFilename() {
         return filename;
     }
@@ -24,5 +26,13 @@ public class AppProps {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public int getPassThresholdPercents() {
+        return passThresholdPercents;
+    }
+
+    public void setPassThresholdPercents(int passThresholdPercents) {
+        this.passThresholdPercents = passThresholdPercents;
     }
 }

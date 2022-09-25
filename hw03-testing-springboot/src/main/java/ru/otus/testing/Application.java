@@ -35,7 +35,7 @@ public class Application {
     }
 
     private void outputTestResult(String studentName, TestResult testResult) {
-        if (testResult.isPassed()) {
+        if (testResult.isPassed(props.getPassThresholdPercents())) {
             var msg = messageSource.getMessage("app.studentPassedTest", new String[]{studentName}, props.getLocale());
             ioService.outputString(msg);
         } else {

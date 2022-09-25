@@ -2,6 +2,7 @@ package ru.otus.testing.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Answer;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 public class TestLoaderCsv implements TestLoader {
     private final String sourceFilename;
 
-    public TestLoaderCsv(AppProps appProps) {
-        this.sourceFilename = appProps.getFilename();
+    public TestLoaderCsv(AppProps appProps, MessageSource messageSource) {
+        this.sourceFilename = messageSource.getMessage("app.filename", null, appProps.getFilename(), appProps.getLocale());
     }
 
     @Override
