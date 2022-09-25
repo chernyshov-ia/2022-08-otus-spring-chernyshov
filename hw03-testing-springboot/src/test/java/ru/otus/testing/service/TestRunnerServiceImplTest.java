@@ -57,8 +57,8 @@ class TestRunnerServiceImplTest {
     @Test
     void when_test_complete_80_percent_right_then_test_is_passed() {
         IOService ioService = Mockito.mock(IOService.class);
-        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1,1,1,1,2);
-        var testRunner = new TestRunnerServiceImpl(ioService, messageSource,props);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1, 1, 1, 1, 2);
+        var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 4);
         assertTrue(result.isPassed(PASS_THRESHOLD_PERCENTS));
@@ -67,7 +67,7 @@ class TestRunnerServiceImplTest {
     @Test
     void when_test_complete_60_percent_right_then_test_is_failed() {
         IOService ioService = Mockito.mock(IOService.class);
-        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1,1,1,2,2);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1, 1, 1, 2, 2);
         var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 3);

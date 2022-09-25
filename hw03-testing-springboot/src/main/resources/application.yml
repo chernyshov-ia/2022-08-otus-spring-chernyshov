@@ -1,4 +1,6 @@
 spring:
+  banner:
+    location: banner.txt
   messages:
     basename: "i18n/appmessages"
     encoding: "UTF-8"
