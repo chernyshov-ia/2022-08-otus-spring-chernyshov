@@ -2,6 +2,7 @@ package ru.otus.testing.service;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
@@ -12,7 +13,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestRunnerServiceImplTest {
-    static TestData testData;
+    private static TestData testData;
+    private static final int PASS_THRESHOLD_PERCENTS = 80;
 
     @BeforeAll
     static void init() {
@@ -27,42 +29,50 @@ class TestRunnerServiceImplTest {
 
     @Test
     void when_test_complete_100_percent_right_then_count_right_answers_is_correct() {
-        var rightAnswers = new ArrayDeque<>(List.of(1,1,1,1,1));
-        IOServiceTesting ioServiceTesting = new IOServiceTesting(rightAnswers);
-        var testRunner = new TestRunnerServiceImpl(ioServiceTesting);
+        IOService ioService = Mockito.mock(IOService.class);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1);
+
+        var testRunner = new TestRunnerServiceImpl(ioService);
+
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), testData.getQuestionsCount());
-        assertTrue(result.isPassed());
+        assertTrue(result.isPassed(PASS_THRESHOLD_PERCENTS));
     }
 
     @Test
     void when_test_complete_0_percent_right_then_count_right_answers_is_correct() {
-        var rightAnswers = new ArrayDeque<>(List.of(2,2,2,2,2));
-        IOServiceTesting ioServiceTesting = new IOServiceTesting(rightAnswers);
-        var testRunner = new TestRunnerServiceImpl(ioServiceTesting);
+        IOService ioService = Mockito.mock(IOService.class);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(2);
+
+        var testRunner = new TestRunnerServiceImpl(ioService);
+
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 0);
-        assertFalse(result.isPassed());
+        assertFalse(result.isPassed(PASS_THRESHOLD_PERCENTS));
     }
 
     @Test
     void when_test_complete_80_percent_right_then_test_is_passed() {
-        var rightAnswers = new ArrayDeque<>(List.of(1,1,1,1,2));
-        IOServiceTesting ioServiceTesting = new IOServiceTesting(rightAnswers);
-        var testRunner = new TestRunnerServiceImpl(ioServiceTesting);
+        IOService ioService = Mockito.mock(IOService.class);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1,1,1,1,2);
+
+        var testRunner = new TestRunnerServiceImpl(ioService);
+
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 4);
-        assertTrue(result.isPassed());
+        assertTrue(result.isPassed(PASS_THRESHOLD_PERCENTS));
     }
 
     @Test
     void when_test_complete_60_percent_right_then_test_is_failed() {
-        var rightAnswers = new ArrayDeque<>(List.of(1,1,1,2,2));
-        IOServiceTesting ioServiceTesting = new IOServiceTesting(rightAnswers);
-        var testRunner = new TestRunnerServiceImpl(ioServiceTesting);
+        IOService ioService = Mockito.mock(IOService.class);
+        Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1,1,1,2,2);
+
+        var testRunner = new TestRunnerServiceImpl(ioService);
+
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 3);
-        assertFalse(result.isPassed());
+        assertFalse(result.isPassed(PASS_THRESHOLD_PERCENTS));
     }
 
 }
