@@ -1,0 +1,7 @@
+spring:
+  banner:
+    location: banner.txt
+
+application:
+  filename: questions.csv
+  passThresholdPercents: 80
