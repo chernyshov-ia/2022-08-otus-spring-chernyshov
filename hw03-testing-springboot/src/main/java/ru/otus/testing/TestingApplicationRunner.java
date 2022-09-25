@@ -7,15 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TestingApplicationRunner implements ApplicationRunner {
-    private final ApplicationContext context;
+    private final Application application;
 
-    public TestingApplicationRunner(ApplicationContext context) {
-        this.context = context;
+    public TestingApplicationRunner(Application application) {
+        this.application = application;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Application application = context.getBean(Application.class);
         application.run();
     }
 }
