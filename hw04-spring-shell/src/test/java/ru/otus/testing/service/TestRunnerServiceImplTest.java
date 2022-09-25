@@ -3,7 +3,10 @@ package ru.otus.testing.service;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Configuration;
 import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
@@ -15,10 +18,18 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class TestRunnerServiceImplTest {
     private static TestData testData;
-    private static AppProps props;
+    private static AppProps props = new AppProps();
     private static final int PASS_THRESHOLD_PERCENTS = 80;
+
+    @MockBean
+    private static MessageSource messageSource;
+
+    @Configuration
+    public static class NestedConfiguration {
+    }
 
     @BeforeAll
     static void init() {
@@ -36,7 +47,8 @@ class TestRunnerServiceImplTest {
     void when_test_complete_100_percent_right_then_count_right_answers_is_correct() {
         IOService ioService = Mockito.mock(IOService.class);
         Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1);
-        var testRunner = new TestRunnerServiceImpl(ioService, props);
+
+        var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), testData.getQuestionsCount());
         assertTrue(result.isPassed(PASS_THRESHOLD_PERCENTS));
@@ -46,7 +58,8 @@ class TestRunnerServiceImplTest {
     void when_test_complete_0_percent_right_then_count_right_answers_is_correct() {
         IOService ioService = Mockito.mock(IOService.class);
         Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(2);
-        var testRunner = new TestRunnerServiceImpl(ioService, props);
+
+        var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 0);
         assertFalse(result.isPassed(PASS_THRESHOLD_PERCENTS));
@@ -56,7 +69,8 @@ class TestRunnerServiceImplTest {
     void when_test_complete_80_percent_right_then_test_is_passed() {
         IOService ioService = Mockito.mock(IOService.class);
         Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1, 1, 1, 1, 2);
-        var testRunner = new TestRunnerServiceImpl(ioService, props);
+
+        var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 4);
         assertTrue(result.isPassed(PASS_THRESHOLD_PERCENTS));
@@ -66,7 +80,8 @@ class TestRunnerServiceImplTest {
     void when_test_complete_60_percent_right_then_test_is_failed() {
         IOService ioService = Mockito.mock(IOService.class);
         Mockito.when(ioService.readIntWithPrompt(Mockito.any())).thenReturn(1, 1, 1, 2, 2);
-        var testRunner = new TestRunnerServiceImpl(ioService, props);
+
+        var testRunner = new TestRunnerServiceImpl(ioService, messageSource, props);
         TestResult result = testRunner.perform(testData);
         assertEquals(result.getRightAnswers(), 3);
         assertFalse(result.isPassed(PASS_THRESHOLD_PERCENTS));

@@ -1,9 +1,14 @@
 package ru.otus.testing.service;
 
+import ch.qos.logback.classic.sift.AppenderFactoryUsingJoran;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Configuration;
 import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
@@ -14,9 +19,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class TestLoaderCsvTest {
     private static final String CSV_FILE_1 = "test1.csv";
     private static TestData testData;
+
+    @Configuration
+    public static class NestedConfiguration {
+    }
 
     @BeforeAll
     static void init() {
