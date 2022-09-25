@@ -3,6 +3,7 @@ package ru.otus.testing;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import ru.otus.testing.config.AppProps;
+import ru.otus.testing.context.UserContext;
 import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
 import ru.otus.testing.service.IOService;
@@ -16,22 +17,27 @@ public class Application {
     private final TestLoader testLoader;
     private final MessageSource messageSource;
     private final AppProps props;
+    private final UserContext userContext;
 
     public Application(TestRunnerService testRunnerService, IOService ioService, TestLoader testLoader,
-                       MessageSource messageSource, AppProps props) {
+                       MessageSource messageSource, AppProps props, UserContext userContext) {
         this.testRunnerService = testRunnerService;
         this.ioService = ioService;
         this.testLoader = testLoader;
         this.messageSource = messageSource;
         this.props = props;
+        this.userContext = userContext;
     }
 
     public void run() {
-        var prompt = messageSource.getMessage("app.queryName", new String[]{}, props.getLocale());
-        String studentName = ioService.readStringWithPrompt(prompt + ": ");
+        if (userContext.getUsername() == null || "".equals(userContext.getUsername().trim())) {
+            var msg = messageSource.getMessage("runner.unknownUser", null, "Username not selected", props.getLocale());
+            ioService.outputString(msg);
+            return;
+        }
         TestData test = testLoader.load();
         TestResult result = testRunnerService.perform(test);
-        outputTestResult(studentName, result);
+        outputTestResult(userContext.getUsername(), result);
     }
 
     private void outputTestResult(String studentName, TestResult testResult) {

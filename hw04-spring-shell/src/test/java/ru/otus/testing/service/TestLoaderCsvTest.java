@@ -1,11 +1,8 @@
 package ru.otus.testing.service;
 
-import ch.qos.logback.classic.sift.AppenderFactoryUsingJoran;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
