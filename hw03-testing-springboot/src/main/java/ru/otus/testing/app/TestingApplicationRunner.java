@@ -1,8 +1,7 @@
-package ru.otus.testing;
+package ru.otus.testing.app;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,7 @@ public class TestingApplicationRunner implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         application.run();
     }
 }

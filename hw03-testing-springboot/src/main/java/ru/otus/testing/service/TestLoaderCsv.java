@@ -17,16 +17,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class TestLoaderCsv implements TestLoader {
-    private final String sourceFilename;
-
-    public TestLoaderCsv(AppProps appProps, MessageSource messageSource) {
-        this.sourceFilename = messageSource.getMessage("app.filename", null, appProps.getFilename(), appProps.getLocale());
-    }
 
     @Override
-    public TestData load() {
+    public TestData load(String sourceFilename) {
         try {
-            var csv = loadCsv();
+            var csv = loadCsv(sourceFilename);
             var description = extractDescription(csv);
             var questions = extractQuestions(csv);
 
@@ -40,7 +35,7 @@ public class TestLoaderCsv implements TestLoader {
         }
     }
 
-    private List<String[]> loadCsv() {
+    private List<String[]> loadCsv(String sourceFilename) {
         try ( var stream = TestLoaderCsv.class.getClassLoader().getResourceAsStream(sourceFilename) ) {
 
             if ( stream == null ) {

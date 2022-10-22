@@ -2,9 +2,6 @@ package ru.otus.testing.service;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.context.MessageSource;
-import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
@@ -43,14 +40,9 @@ class TestLoaderCsvTest {
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var props  = new AppProps();
-        MessageSource messageSource = Mockito.mock(MessageSource.class);
-        Mockito.when(messageSource.getMessage(Mockito.any(), Mockito.any(), Mockito.any(),  Mockito.any())).thenReturn(CSV_FILE_1);
-
-        var loader = new TestLoaderCsv(props, messageSource);
-        var loadedTest = loader.load();
+        var loader = new TestLoaderCsv();
+        var loadedTest = loader.load(CSV_FILE_1);
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
-
     }
 
 }
