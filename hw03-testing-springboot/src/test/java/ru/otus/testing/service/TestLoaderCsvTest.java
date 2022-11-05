@@ -1,6 +1,6 @@
 package ru.otus.testing.service;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
@@ -13,12 +13,11 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TestLoaderCsvTest {
-    private static final String CSV_FILE_1 = "test1.csv";
-    private static TestData testData;
+    private final String CSV_FILE_1 = "test1.csv";
+    private TestData testData;
 
-    @BeforeAll
-    static void init() {
-
+    @BeforeEach
+    void setUp() {
         var questions = new ArrayList<Question>();
 
         questions.add(new Question("Question 1", List.of(
@@ -36,7 +35,6 @@ class TestLoaderCsvTest {
                         new Answer("Variant 3_3", true))));
 
         testData = new TestData("Test1", questions);
-
     }
 
     @Test

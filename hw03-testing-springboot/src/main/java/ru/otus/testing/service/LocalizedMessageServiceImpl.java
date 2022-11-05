@@ -2,7 +2,6 @@ package ru.otus.testing.service;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.otus.testing.config.AppProps;
 
 import java.util.Locale;
 
@@ -14,11 +13,6 @@ public class LocalizedMessageServiceImpl implements LocalizedMessageService {
     public LocalizedMessageServiceImpl(MessageSource messageSource, Locale locale) {
         this.messageSource = messageSource;
         this.locale = locale;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
     }
 
     @Override
