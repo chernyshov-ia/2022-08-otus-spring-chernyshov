@@ -1,7 +1,6 @@
 package ru.otus.testing.service;
 
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 

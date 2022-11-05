@@ -1,6 +1,5 @@
 package ru.otus.testing.service;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
