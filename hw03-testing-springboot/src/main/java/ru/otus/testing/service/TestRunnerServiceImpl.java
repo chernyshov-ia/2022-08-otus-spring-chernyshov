@@ -1,8 +1,6 @@
 package ru.otus.testing.service;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
