@@ -6,7 +6,6 @@ import org.springframework.util.StringUtils;
 import java.io.InputStream;
 import java.util.Locale;
 
-@Component
 public class QuestionsResourceProvider implements ResourceProvider {
     private final Locale locale;
     private final String resourceFilename;

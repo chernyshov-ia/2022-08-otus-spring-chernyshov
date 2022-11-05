@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
-@Service
 public class LocalizedMessageServiceImpl implements LocalizedMessageService {
     private final MessageSource messageSource;
     private final Locale locale;
