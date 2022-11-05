@@ -14,8 +14,7 @@ public class QuestionsResourceProvider implements ResourceProvider {
         this.resourceFilename = resourceFilename;
     }
 
-    @Override
-    public InputStream getResourceAsAsStream() {
+    private String getResourceFilename() {
         String filename = StringUtils.stripFilenameExtension(resourceFilename);
         String filenameExt = StringUtils.getFilenameExtension(resourceFilename);
 
@@ -25,12 +24,15 @@ public class QuestionsResourceProvider implements ResourceProvider {
         } else {
             resourceFilename = filename + "_" + locale + "." + filenameExt;
         }
+        return resourceFilename;
+    }
 
-        var resourceAsStream = ResourceProvider.class.getClassLoader().getResourceAsStream(resourceFilename);
+    @Override
+    public InputStream getResourceAsAsStream() {
+        var resourceAsStream = ResourceProvider.class.getClassLoader().getResourceAsStream(getResourceFilename());
         if ( resourceAsStream == null ) {
             throw new RuntimeException("Resource not found");
         }
-
         return resourceAsStream;
     }
 
