@@ -10,6 +10,7 @@ import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,9 @@ import java.util.stream.Collectors;
 public class TestLoaderCsv implements TestLoader {
 
     @Override
-    public TestData load(String sourceFilename) {
+    public TestData load(InputStream resource) {
         try {
-            var csv = loadCsv(sourceFilename);
+            var csv = loadCsv(resource);
             var description = extractDescription(csv);
             var questions = extractQuestions(csv);
 
@@ -35,18 +36,16 @@ public class TestLoaderCsv implements TestLoader {
         }
     }
 
-    private List<String[]> loadCsv(String sourceFilename) {
-        try ( var stream = TestLoaderCsv.class.getClassLoader().getResourceAsStream(sourceFilename) ) {
-
-            if ( stream == null ) {
+    private List<String[]> loadCsv( InputStream resource ) {
+        try  {
+            if ( resource == null ) {
                 throw new RuntimeException("Resource not found");
             }
 
-            try (var streamReader = new InputStreamReader(stream);
+            try (var streamReader = new InputStreamReader(resource);
                  CSVReader reader = new CSVReader(streamReader)) {
                 return reader.readAll();
             }
-
         } catch (IOException | CsvException e) {
             throw new RuntimeException("Can't load resource", e);
         }

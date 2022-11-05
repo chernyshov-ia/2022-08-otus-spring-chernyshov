@@ -8,6 +8,7 @@ import ru.otus.testing.domain.TestData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +42,8 @@ class TestLoaderCsvTest {
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
         var loader = new TestLoaderCsv();
-        var loadedTest = loader.load(CSV_FILE_1);
+        var resourceProvider = new QuestionsResourceProvider(Locale.ENGLISH, CSV_FILE_1);
+        var loadedTest = loader.load(resourceProvider.getResourceAsAsStream());
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
     }
 
