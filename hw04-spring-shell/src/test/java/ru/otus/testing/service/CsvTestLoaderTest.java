@@ -1,6 +1,7 @@
 package ru.otus.testing.service;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,20 +14,21 @@ import ru.otus.testing.domain.TestData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class TestLoaderCsvTest {
-    private static final String CSV_FILE_1 = "test1.csv";
-    private static TestData testData;
+class CsvTestLoaderTest {
+    private final String CSV_FILE_1 = "test1.csv";
+    private TestData testData;
 
     @Configuration
     public static class NestedConfiguration {
     }
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void setUp() {
 
         var questions = new ArrayList<Question>();
 
@@ -50,14 +52,10 @@ class TestLoaderCsvTest {
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var props  = new AppProps();
-        MessageSource messageSource = Mockito.mock(MessageSource.class);
-        Mockito.when(messageSource.getMessage(Mockito.any(), Mockito.any(), Mockito.any(),  Mockito.any())).thenReturn(CSV_FILE_1);
-
-        var loader = new TestLoaderCsv(props, messageSource);
-        var loadedTest = loader.load();
+        var loader = new CsvTestLoader();
+        var resourceProvider = new FileQuestionsResourceProvider(Locale.ENGLISH, CSV_FILE_1);
+        var loadedTest = loader.load(resourceProvider.getResourceAsAsStream());
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
-
     }
 
 }

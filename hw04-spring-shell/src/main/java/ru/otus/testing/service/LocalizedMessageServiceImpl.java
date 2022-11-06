@@ -18,4 +18,10 @@ public class LocalizedMessageServiceImpl implements LocalizedMessageService {
         return messageSource.getMessage(code, new String[]{},
                 "", locale);
     }
+
+    @Override
+    public String getMessage(String code, Object[] args) {
+        return messageSource.getMessage(code, args,
+                "", locale);
+    }
 }

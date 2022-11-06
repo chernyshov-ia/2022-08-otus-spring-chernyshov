@@ -1,28 +1,28 @@
 package ru.otus.testing.controllers;
 
-import org.springframework.context.MessageSource;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
-import ru.otus.testing.Application;
+import ru.otus.testing.app.Application;
 import ru.otus.testing.config.AppProps;
 import ru.otus.testing.context.UserContext;
 import ru.otus.testing.service.IOService;
+import ru.otus.testing.service.LocalizedMessageService;
 
 @ShellComponent
 public class ShellController {
     private final Application application;
     private final IOService ioService;
-    private final MessageSource messageSource;
+    private final LocalizedMessageService messageService;
     private final AppProps props;
     private final UserContext userContext;
 
-    public ShellController(Application application, IOService ioService, MessageSource messageSource,
+    public ShellController(Application application, IOService ioService, LocalizedMessageService messageService,
                            AppProps props, UserContext userContext) {
         this.application = application;
         this.ioService = ioService;
-        this.messageSource = messageSource;
+        this.messageService = messageService;
         this.props = props;
         this.userContext = userContext;
     }
@@ -38,7 +38,7 @@ public class ShellController {
 
     @ShellMethod(value = "Specify you name", key = {"login","name", "l"})
     public void login() {
-        var prompt = messageSource.getMessage("app.queryName", new String[]{}, props.getLocale());
+        var prompt = messageService.getMessage("app.queryName");
         var username = ioService.readStringWithPrompt(prompt + ": ");
         userContext.setUsername(username);
         ioService.outputString("You name now is " + username);
