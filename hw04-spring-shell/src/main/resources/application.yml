@@ -6,6 +6,6 @@ spring:
     encoding: "UTF-8"
 
 application:
-  filename: questions.csv
+  resourceFilename: questions.csv
   locale: ru_RU
   passThresholdPercents: 80

@@ -20,7 +20,7 @@ public class TestLoaderCsv implements TestLoader {
     private final String sourceFilename;
 
     public TestLoaderCsv(AppProps appProps, MessageSource messageSource) {
-        this.sourceFilename = messageSource.getMessage("app.filename", null, appProps.getFilename(), appProps.getLocale());
+        this.sourceFilename = messageSource.getMessage("app.filename", null, appProps.getResourceFilename(), appProps.getLocale());
     }
 
     @Override
