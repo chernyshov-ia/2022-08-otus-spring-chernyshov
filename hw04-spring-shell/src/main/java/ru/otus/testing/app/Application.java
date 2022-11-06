@@ -2,6 +2,7 @@ package ru.otus.testing.app;
 
 import org.springframework.stereotype.Component;
 import ru.otus.testing.config.AppProps;
+import ru.otus.testing.context.UserContext;
 import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
 import ru.otus.testing.service.*;
@@ -17,24 +18,30 @@ public class Application {
     private final LocalizedMessageService messageService;
     private final AppProps props;
     private final QuestionsResourceProvider resourceProvider;
+    private final UserContext userContext;
 
     public Application(TestRunnerService testRunnerService, IOService ioService, TestLoader testLoader,
-                       LocalizedMessageService messageService, AppProps props, QuestionsResourceProvider resourceProvider) {
+                       LocalizedMessageService messageService, AppProps props, QuestionsResourceProvider resourceProvider,
+                       UserContext userContext) {
         this.testRunnerService = testRunnerService;
         this.ioService = ioService;
         this.testLoader = testLoader;
         this.messageService = messageService;
         this.props = props;
         this.resourceProvider = resourceProvider;
+        this.userContext = userContext;
     }
 
     public void run() {
-        var prompt = messageService.getMessage("app.queryName");
-        String studentName = ioService.readStringWithPrompt(prompt + ": ");
+        if (userContext.getUsername() == null || "".equals(userContext.getUsername().trim())) {
+            var msg = messageService.getMessage("runner.unknownUser");
+            ioService.outputString(msg);
+            return;
+        }
         try ( InputStream resourceAsStream = resourceProvider.getResourceAsAsStream() ) {
             TestData test = testLoader.load(resourceAsStream);
             TestResult result = testRunnerService.perform(test);
-            outputTestResult(studentName, result);
+            outputTestResult(userContext.getUsername(), result);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
