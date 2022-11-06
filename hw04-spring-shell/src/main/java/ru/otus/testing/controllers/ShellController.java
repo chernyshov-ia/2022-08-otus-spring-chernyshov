@@ -30,7 +30,8 @@ public class ShellController {
     @ShellMethodAvailability({"start"})
     public Availability isUsernameSelected() {
         if( userContext.getUsername() == null || "".equals(userContext.getUsername().trim())) {
-            return Availability.unavailable("Username must be specified");
+            var message = messageService.getMessage("runner.unknownUser");
+            return Availability.unavailable(message);
         } else {
             return Availability.available();
         }
