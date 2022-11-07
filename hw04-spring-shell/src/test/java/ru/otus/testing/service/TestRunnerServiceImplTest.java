@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestRunnerServiceImplTest {
     private TestData testData;
     private TestRunnerService testRunner;
-    private final int PASS_THRESHOLD_PERCENTS = 80;
+    private final static int PASS_THRESHOLD_PERCENTS = 80;
 
     @MockBean
     private static LocalizedMessageService messageService;

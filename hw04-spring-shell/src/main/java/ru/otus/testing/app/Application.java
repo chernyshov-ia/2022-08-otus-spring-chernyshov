@@ -7,9 +7,6 @@ import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
 import ru.otus.testing.service.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 @Component
 public class Application {
     private final TestRunnerService testRunnerService;
@@ -17,7 +14,6 @@ public class Application {
     private final TestLoader testLoader;
     private final LocalizedMessageService messageService;
     private final AppProps props;
-    private final QuestionsResourceProvider resourceProvider;
     private final UserContext userContext;
 
     public Application(TestRunnerService testRunnerService, IOService ioService, TestLoader testLoader,
@@ -28,7 +24,6 @@ public class Application {
         this.testLoader = testLoader;
         this.messageService = messageService;
         this.props = props;
-        this.resourceProvider = resourceProvider;
         this.userContext = userContext;
     }
 
@@ -38,13 +33,9 @@ public class Application {
             ioService.outputString(msg);
             return;
         }
-        try ( InputStream resourceAsStream = resourceProvider.getResourceAsAsStream() ) {
-            TestData test = testLoader.load(resourceAsStream);
-            TestResult result = testRunnerService.perform(test);
-            outputTestResult(userContext.getUsername(), result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        TestData test = testLoader.load();
+        TestResult result = testRunnerService.perform(test);
+        outputTestResult(userContext.getUsername(), result);
     }
 
     private void outputTestResult(String studentName, TestResult testResult) {

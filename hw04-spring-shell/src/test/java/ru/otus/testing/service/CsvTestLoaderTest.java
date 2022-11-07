@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class CsvTestLoaderTest {
-    private final String CSV_FILE_1 = "test1.csv";
+    private final static String CSV_FILE_1 = "test1.csv";
     private TestData testData;
 
     @Configuration
@@ -48,9 +48,9 @@ class CsvTestLoaderTest {
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var loader = new CsvTestLoader();
         var resourceProvider = new FileQuestionsResourceProvider(Locale.ENGLISH, CSV_FILE_1);
-        var loadedTest = loader.load(resourceProvider.getResourceAsAsStream());
+        var loader = new CsvTestLoader(resourceProvider);
+        var loadedTest = loader.load();
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
     }
 
