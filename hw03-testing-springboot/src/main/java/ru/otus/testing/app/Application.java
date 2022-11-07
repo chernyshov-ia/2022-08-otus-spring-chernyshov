@@ -1,14 +1,10 @@
 package ru.otus.testing.app;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
 import ru.otus.testing.service.*;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Component
 public class Application {
@@ -17,16 +13,14 @@ public class Application {
     private final TestLoader testLoader;
     private final LocalizedMessageService messageService;
     private final AppProps props;
-    private final ResourceProvider resourceProvider;
 
     public Application(TestRunnerService testRunnerService, IOService ioService, TestLoader testLoader,
-                       LocalizedMessageService messageService, AppProps props, ResourceProvider resourceProvider) {
+                       LocalizedMessageService messageService, AppProps props) {
         this.testRunnerService = testRunnerService;
         this.ioService = ioService;
         this.testLoader = testLoader;
         this.messageService = messageService;
         this.props = props;
-        this.resourceProvider = resourceProvider;
     }
 
     public void run() {
