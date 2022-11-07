@@ -13,7 +13,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TestLoaderCsvTest {
-    private final String CSV_FILE_1 = "test1.csv";
+    private static final String CSV_FILE_1 = "test1.csv";
     private TestData testData;
 
     @BeforeEach
@@ -39,9 +39,9 @@ class TestLoaderCsvTest {
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var loader = new TestLoaderCsv();
         var resourceProvider = new QuestionsResourceProvider(Locale.ENGLISH, CSV_FILE_1);
-        var loadedTest = loader.load(resourceProvider.getResourceAsAsStream());
+        var loader = new TestLoaderCsv(resourceProvider);
+        var loadedTest = loader.load();
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
     }
 

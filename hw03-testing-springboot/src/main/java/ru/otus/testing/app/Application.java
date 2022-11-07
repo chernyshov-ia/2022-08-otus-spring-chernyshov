@@ -32,13 +32,9 @@ public class Application {
     public void run() {
         var prompt = messageService.getMessage("app.queryName");
         String studentName = ioService.readStringWithPrompt(prompt + ": ");
-        try ( InputStream resourceAsStream = resourceProvider.getResourceAsAsStream() ) {
-            TestData test = testLoader.load(resourceAsStream);
-            TestResult result = testRunnerService.perform(test);
-            outputTestResult(studentName, result);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        TestData test = testLoader.load();
+        TestResult result = testRunnerService.perform(test);
+        outputTestResult(studentName, result);
     }
 
     private void outputTestResult(String studentName, TestResult testResult) {

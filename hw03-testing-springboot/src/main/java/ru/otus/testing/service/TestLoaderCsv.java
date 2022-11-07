@@ -18,10 +18,15 @@ import java.util.stream.Collectors;
 
 @Component
 public class TestLoaderCsv implements TestLoader {
+    private final ResourceProvider resourceProvider;
+
+    public TestLoaderCsv(ResourceProvider resourceProvider) {
+        this.resourceProvider = resourceProvider;
+    }
 
     @Override
-    public TestData load(InputStream resource) {
-        try {
+    public TestData load() {
+        try ( var resource = resourceProvider.getResourceAsAsStream() ) {
             var csv = loadCsv(resource);
             var description = extractDescription(csv);
             var questions = extractQuestions(csv);

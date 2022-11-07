@@ -19,7 +19,7 @@ class TestRunnerServiceImplTest {
     private TestData testData;
     private IOService ioService;
     private TestRunnerService testRunner;
-    private final int PASS_THRESHOLD_PERCENTS = 80;
+    private static final int PASS_THRESHOLD_PERCENTS = 80;
 
     @BeforeEach
     void setUp() {
