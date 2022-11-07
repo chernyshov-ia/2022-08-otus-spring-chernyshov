@@ -1,11 +1,3 @@
 spring:
   banner:
     location: banner.txt
-  messages:
-    basename: "i18n/appmessages"
-    encoding: "UTF-8"
-
-application:
-  resourceFilename: questions.csv
-  locale: ru_RU
-  passThresholdPercents: 80
