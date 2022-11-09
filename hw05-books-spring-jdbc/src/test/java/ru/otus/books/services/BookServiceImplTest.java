@@ -3,21 +3,30 @@ package ru.otus.books.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.EmptyResultDataAccessException;
 import ru.otus.books.dao.BookDao;
+import ru.otus.books.dao.BookDaoJdbc;
 import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Book;
 import ru.otus.books.domain.Genre;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @DisplayName("сервис для работы с книгами должен")
 @SpringBootTest
 class BookServiceImplTest {
+    private static final long EXISTING_BOOK_ID = 10000;
+
     private static final Book EXISTING_BOOK = new Book(1, "Hobbit",
             new Author(3, "John Ronald Reuel Tolkien" ),
             new Genre(1, "fantasy"));
@@ -25,26 +34,69 @@ class BookServiceImplTest {
     @MockBean
     private IOService ioService;
 
-    @Autowired
+    @MockBean
+    @SpyBean
     private BookDao bookDao;
 
     private BookService bookService;
+
+    @Configuration
+    public static class NestedConfiguration { }
 
     @BeforeEach
     void setUp() {
         bookService = new BookServiceImpl(bookDao, ioService);
     }
 
-    @DisplayName("удалять заданную книгу по её id")
+    @DisplayName("при удалении дергается dao.deleteById() с темже id")
     @Test
-    void shouldCorrectDeleteBookById() {
-        assertThatCode(() -> bookService.getById(EXISTING_BOOK.getId()))
-                .doesNotThrowAnyException();
+    void shouldCallDaoWhenDeleteBookByIdWithSameParam() {
+        when(bookDao.getById(anyLong())).thenReturn(EXISTING_BOOK);
+        bookService.deleteById(EXISTING_BOOK.getId());
+        verify(bookDao).deleteById(EXISTING_BOOK.getId());
+    }
 
-        bookDao.deleteById(EXISTING_BOOK.getId());
+    @DisplayName("возвращать Optional.Empty() по получении книги id возникает исключение EmptyResultDataAccessException")
+    @Test
+    void shouldReturnEmptyByIdWhenThrowEmptyResultDataAccessException() {
+        when(bookDao.getById(EXISTING_BOOK_ID)).thenThrow(EmptyResultDataAccessException.class);
+        Optional<Book> actualAuthor = bookService.getById(EXISTING_BOOK_ID);
+        assertThat(actualAuthor.isEmpty()).isTrue();
+    }
 
-        assertThatThrownBy(() -> bookDao.getById(EXISTING_BOOK.getId()))
-                .isInstanceOf(EmptyResultDataAccessException.class);
+    @DisplayName("выбрасывает исключение, если исключение не EmptyResultDataAccessException")
+    @Test
+    void shouldPassingUnexpectedExceptionWhenGetById() {
+        doThrow(RuntimeException.class).when(bookDao).getById(anyLong());
+        assertThatCode(() -> {
+            Optional<Book> actualAuthor = bookService.getById(EXISTING_BOOK_ID);
+        }).hasNoSuppressedExceptions();
+    }
+
+    @DisplayName("при получение книги дергается dao.getById() с темже id")
+    @Test
+    void shouldCallWithSameParamDaoWhenGetBookById() {
+        when(bookDao.getById(anyLong())).thenReturn(EXISTING_BOOK);
+        var book = bookService.getById(EXISTING_BOOK.getId());
+        verify(bookDao).getById(EXISTING_BOOK.getId());
+    }
+
+    @DisplayName("при получение книги возвращается корректная книга")
+    @Test
+    void shouldReturnCorrectBookWhenGetBookById() {
+        when(bookDao.getById(anyLong())).thenReturn(EXISTING_BOOK);
+        var book = bookService.getById(EXISTING_BOOK.getId());
+        assertThat(book.get()).usingRecursiveComparison().isEqualTo(EXISTING_BOOK);
+    }
+
+    @DisplayName("при создании книги дергается dao с правильными параметрами")
+    @Test
+    void shouldInvokeCreateBook() {
+        Book zeroBook = new Book(EXISTING_BOOK.getName(), EXISTING_BOOK.getAuthor(), EXISTING_BOOK.getGenre());
+        when(bookDao.getById(anyLong())).thenReturn(EXISTING_BOOK);
+        when(bookDao.insert(zeroBook)).thenReturn(EXISTING_BOOK.getId());
+        bookService.create(zeroBook.getName(), zeroBook.getAuthor(), zeroBook.getGenre());
+        verify(bookDao).insert(zeroBook);
     }
 
 }
