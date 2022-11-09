@@ -13,7 +13,6 @@ import ru.otus.books.domain.Genre;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("DAO для работы с книгами должно")
 @JdbcTest
@@ -30,7 +29,7 @@ class BookDaoJdbcTest {
 
     @DisplayName("возвращать ожидаемое количество книг в БД")
     @Test
-    void shouldReturnExpectedPersonCount() {
+    void shouldReturnExpectedBookCount() {
         long actualBooksCount = bookDao.count();
         assertThat(actualBooksCount).isEqualTo(EXPECTED_BOOKS_COUNT);
     }
@@ -67,7 +66,7 @@ class BookDaoJdbcTest {
 
     @DisplayName("возвращать ожидаемый список книг")
     @Test
-    void shouldReturnExpectedPersonsList() {
+    void shouldReturnExpectedBookList() {
         List<Book> actualBookList = bookDao.getAll();
         assertThat(actualBookList)
                 .containsExactlyInAnyOrder(EXISTING_BOOK);

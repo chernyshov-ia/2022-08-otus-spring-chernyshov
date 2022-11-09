@@ -17,4 +17,10 @@ public class Book {
         this.author = author;
         this.genre = genre;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d. %s ( %s / %s )", getId(), getName(),
+                getAuthor().getName(), getGenre().getName());
+    }
 }
