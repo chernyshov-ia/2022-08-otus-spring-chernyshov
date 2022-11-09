@@ -4,7 +4,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.otus.books.dao.AuthorDao;
 import ru.otus.books.domain.Author;
-import ru.otus.books.domain.Book;
 
 import java.util.List;
 import java.util.Optional;

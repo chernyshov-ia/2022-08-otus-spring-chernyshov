@@ -20,7 +20,7 @@ public class AuthorDaoJdbc implements AuthorDao {
 
     @Override
     public List<Author> getAll() {
-        return jdbcOperations.query("select id, name from authors", new AuthorMapper());
+        return jdbcOperations.query("select id, name from authors order by id", new AuthorMapper());
     }
 
     @Override

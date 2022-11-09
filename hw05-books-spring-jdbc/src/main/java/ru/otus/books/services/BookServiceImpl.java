@@ -8,6 +8,7 @@ import ru.otus.books.domain.Book;
 import ru.otus.books.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -45,5 +46,16 @@ public class BookServiceImpl implements BookService {
         var id = bookDao.insert(new Book(name, author, genre));
         var book = bookDao.getById(id);
         ioService.outputString("ADDED: " + book.toString());
+    }
+
+    @Override
+    public Optional<Book> getById(long id) {
+        Book book;
+        try {
+            book = bookDao.getById(id);
+        } catch ( EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+        return Optional.of(book);
     }
 }

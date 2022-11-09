@@ -21,7 +21,7 @@ class GenreDaoJdbcTest {
     @Autowired
     private GenreDao genreDao;
 
-    @DisplayName("возвращать ожидаемый жарн по его id")
+    @DisplayName("возвращать ожидаемый жанр по его id")
     @Test
     void shouldReturnExpectedGenreById() {
         Genre actualGenre = genreDao.getById(EXISTING_GENRE_2.getId());

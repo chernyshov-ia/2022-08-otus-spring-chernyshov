@@ -7,6 +7,7 @@ import org.springframework.shell.standard.ShellOption;
 import ru.otus.books.services.AuthorService;
 import ru.otus.books.services.BookService;
 import ru.otus.books.services.GenreService;
+import ru.otus.books.services.IOService;
 
 import static java.util.Objects.isNull;
 
@@ -15,11 +16,13 @@ public class ShellController {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final IOService ioService;
 
-    public ShellController(BookService bookService, AuthorService authorService, GenreService genreService) {
+    public ShellController(BookService bookService, AuthorService authorService, GenreService genreService, IOService ioService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.genreService = genreService;
+        this.ioService = ioService;
     }
 
     @ShellMethod(value = "Listing of all books", key = {"list", "l"})
@@ -53,5 +56,16 @@ public class ShellController {
 
         bookService.create(name, author.get(), genre.get());
     }
+
+    @ShellMethod(value = "Listing of all genres", key = {"genres"})
+    public void listGenres() {
+        genreService.list();
+    }
+
+    @ShellMethod(value = "Listing of all authors", key = {"authors"})
+    public void listAuthors() {
+        authorService.list();
+    }
+
 
 }
