@@ -1,6 +1,5 @@
 package ru.otus.books.services;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.otus.books.dao.BookDao;
 import ru.otus.books.domain.Author;
@@ -21,41 +20,27 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void list() {
-        List<Book> books = bookDao.getAll();
-        for (Book book : books) {
-            ioService.outputString(book.toString());
-        }
+    public void deleteById(long id) {
+        bookDao.deleteById(id);
+        ioService.outputString( String.format("Book{id=%d} deleted\n",id));
     }
 
     @Override
-    public void deleteById(long id) {
-        Book book;
-        try {
-            book = bookDao.getById(id);
-        } catch ( EmptyResultDataAccessException e) {
-            ioService.outputString("Book not found");
-            return;
-        }
-        bookDao.deleteById(book.getId());
-        ioService.outputString("DELETED: " + book.toString());
+    public List<Book> getAll() {
+        return bookDao.getAll();
     }
 
     @Override
     public void create(String name, Author author, Genre genre) {
         var id = bookDao.insert(new Book(name, author, genre));
         var book = bookDao.getById(id);
-        ioService.outputString("ADDED: " + book.toString());
+        if(book.isPresent()) {
+            ioService.outputString("ADDED: " + book.get());
+        }
     }
 
     @Override
     public Optional<Book> getById(long id) {
-        Book book;
-        try {
-            book = bookDao.getById(id);
-        } catch ( EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-        return Optional.of(book);
+        return bookDao.getById(id);
     }
 }

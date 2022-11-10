@@ -1,5 +1,6 @@
 package ru.otus.books.dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class BookDaoJdbc implements BookDao {
@@ -43,16 +45,20 @@ public class BookDaoJdbc implements BookDao {
     }
 
     @Override
-    public Book getById(long id) {
+    public Optional<Book> getById(long id) {
         var params = Collections.singletonMap("id", id);
+        try {
+            return Optional.ofNullable(jdbcOperations.queryForObject("select b.id, b.name, " +
+                    "g.id as genre_id, g.name as genre_name,  " +
+                    "a.id as author_id, a.name as author_name " +
+                    "from books b " +
+                    "join genres g on g.id = b.genre_id " +
+                    "join authors a on a.id = b.author_id " +
+                    "where b.id = :id", params, new BookMapper()));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
 
-        return jdbcOperations.queryForObject("select b.id, b.name, " +
-                "g.id as genre_id, g.name as genre_name,  " +
-                "a.id as author_id, a.name as author_name " +
-                "from books b " +
-                "join genres g on g.id = b.genre_id " +
-                "join authors a on a.id = b.author_id " +
-                "where b.id = :id", params, new BookMapper());
     }
 
     @Override

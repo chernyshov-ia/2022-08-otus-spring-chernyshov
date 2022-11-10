@@ -25,8 +25,8 @@ class AuthorDaoJdbcTest {
     @DisplayName("возвращать ожидаемого автора по его id")
     @Test
     void shouldReturnExpectedGenreById() {
-        Author actualAuthor = authorDao.getById(EXISTING_AUTHOR_2.getId());
-        assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR_2);
+        var actualAuthor = authorDao.getById(EXISTING_AUTHOR_2.getId());
+        assertThat(actualAuthor.orElseThrow()).usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR_2);
     }
 
 

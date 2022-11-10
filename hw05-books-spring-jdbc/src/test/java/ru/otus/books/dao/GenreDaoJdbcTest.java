@@ -24,7 +24,7 @@ class GenreDaoJdbcTest {
     @DisplayName("возвращать ожидаемый жанр по его id")
     @Test
     void shouldReturnExpectedGenreById() {
-        Genre actualGenre = genreDao.getById(EXISTING_GENRE_2.getId());
+        Genre actualGenre = genreDao.getById(EXISTING_GENRE_2.getId()).orElseThrow();
         assertThat(actualGenre).usingRecursiveComparison().isEqualTo(EXISTING_GENRE_2);
     }
 

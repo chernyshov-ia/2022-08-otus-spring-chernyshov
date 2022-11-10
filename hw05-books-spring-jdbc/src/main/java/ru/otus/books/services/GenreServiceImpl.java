@@ -20,20 +20,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Optional<Genre> getById(long id) {
-        Genre genre;
-        try {
-            genre = genreDao.getById(id);
-        } catch ( EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-        return Optional.of(genre);
+        return genreDao.getById(id);
     }
 
     @Override
-    public void list() {
-        List<Genre> authors = genreDao.getAll();
-        for (Genre genre : authors) {
-            ioService.outputString(genre.toString());
-        }
+    public List<Genre> getAll() {
+        return genreDao.getAll();
     }
+
 }

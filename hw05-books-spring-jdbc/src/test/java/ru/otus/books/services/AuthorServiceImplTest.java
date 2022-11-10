@@ -3,22 +3,24 @@ package ru.otus.books.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.EmptyResultDataAccessException;
 import ru.otus.books.dao.AuthorDao;
 import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Genre;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("сервис для работы с авторами должен")
 @SpringBootTest
@@ -30,6 +32,7 @@ class AuthorServiceImplTest {
     private IOService ioService;
 
     @MockBean
+    @SpyBean
     private AuthorDao authorDao;
 
     private AuthorService authorService;
@@ -45,26 +48,28 @@ class AuthorServiceImplTest {
     @DisplayName("возвращать ожидаемого автора по его id")
     @Test
     void shouldReturnExpectedAuthorById() {
-        when(authorDao.getById(EXISTING_AUTHOR.getId())).thenReturn(EXISTING_AUTHOR);
+        when(authorDao.getById(EXISTING_AUTHOR.getId())).thenReturn(Optional.of(EXISTING_AUTHOR));
         Optional<Author> actualAuthor = authorService.getById(EXISTING_AUTHOR.getId());
-        assertThat(actualAuthor.get()).usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR);
+        assertThat(actualAuthor.orElseThrow()).usingRecursiveComparison().isEqualTo(EXISTING_AUTHOR);
+        verify(authorDao).getById(anyLong());
     }
 
-    @DisplayName("возвращать Optional.Empty() по id при возникновении EmptyResultDataAccessException")
+    @DisplayName("возвращать Optional.Empty() при несуществующем id")
     @Test
-    void shouldReturnEmptyByIdWhenThrowEmptyResultDataAccessException() {
-        when(authorDao.getById(NOT_EXISTING_AUTHOR_ID)).thenThrow(EmptyResultDataAccessException.class);
-        Optional<Author> actualAuthor = authorService.getById(NOT_EXISTING_AUTHOR_ID);
+    void shouldReturnEmpty() {
+        when(authorDao.getById(NOT_EXISTING_AUTHOR_ID)).thenReturn(Optional.empty());
+        var actualAuthor = authorService.getById(NOT_EXISTING_AUTHOR_ID);
         assertThat(actualAuthor.isEmpty()).isTrue();
+        verify(authorDao).getById(anyLong());
     }
 
-    @DisplayName("выбрасывает исключение, если исключение не EmptyResultDataAccessException")
+    @DisplayName("возвращать ожидаемый List авторов")
     @Test
-    void shouldPassingUnexpectedExceptionWhenGetById() {
-        doThrow(RuntimeException.class).when(authorDao).getById(anyLong());
-        assertThatCode(() -> {
-            Optional<Author> actualAuthor = authorService.getById(NOT_EXISTING_AUTHOR_ID);
-        }).hasNoSuppressedExceptions();
+    void shouldReturnList() {
+        when(authorDao.getAll()).thenReturn(List.of(EXISTING_AUTHOR));
+        var list = authorService.getAll();
+        assertThat(list).containsExactlyInAnyOrder(EXISTING_AUTHOR);
+        verify(authorDao).getAll();
     }
 
 }

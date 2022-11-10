@@ -4,6 +4,9 @@ package ru.otus.books.controllers;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.books.domain.Author;
+import ru.otus.books.domain.Book;
+import ru.otus.books.domain.Genre;
 import ru.otus.books.services.AuthorService;
 import ru.otus.books.services.BookService;
 import ru.otus.books.services.GenreService;
@@ -27,11 +30,13 @@ public class ShellController {
 
     @ShellMethod(value = "Listing of all books", key = {"list", "l"})
     public void list() {
-        bookService.list();
+        for (Book book : bookService.getAll()) {
+            ioService.outputString(book.toString());
+        }
     }
 
     @ShellMethod(value = "Delete one book", key = {"delete", "del", "d"})
-    public void delete(@ShellOption(value = {}, help = "№ for deleting") Long id) {
+    public void delete(Long id) {
         bookService.deleteById(id);
     }
 
@@ -59,12 +64,16 @@ public class ShellController {
 
     @ShellMethod(value = "Listing of all genres", key = {"genres"})
     public void listGenres() {
-        genreService.list();
+        for (Genre genre : genreService.getAll()) {
+            ioService.outputString(genre.toString());
+        }
     }
 
     @ShellMethod(value = "Listing of all authors", key = {"authors"})
     public void listAuthors() {
-        authorService.list();
+        for (Author author : authorService.getAll()) {
+            ioService.outputString(author.toString());
+        }
     }
 
 

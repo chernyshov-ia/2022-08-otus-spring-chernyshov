@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.EmptyResultDataAccessException;
 import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Book;
 import ru.otus.books.domain.Genre;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с книгами должно")
 @JdbcTest
@@ -41,27 +40,27 @@ class BookDaoJdbcTest {
                 new Author(3, "John Ronald Reuel Tolkien" ),
                 new Genre(1, "fantasy"));
         bookDao.insert(expectedBook);
-        Book actualPerson = bookDao.getById(expectedBook.getId());
-        assertThat(actualPerson).usingRecursiveComparison().isEqualTo(expectedBook);
+        Book actualBook = bookDao.getById(expectedBook.getId()).orElseThrow();
+        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @DisplayName("возвращать ожидаемую книгу по её id")
     @Test
     void shouldReturnExpectedBookById() {
-        Book actualBook = bookDao.getById(EXISTING_BOOK.getId());
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(EXISTING_BOOK);
+        var actualBook = bookDao.getById(EXISTING_BOOK.getId());
+        assertThat(actualBook.orElseThrow()).usingRecursiveComparison().isEqualTo(EXISTING_BOOK);
     }
 
     @DisplayName("удалять заданную книгу по её id")
     @Test
     void shouldCorrectDeleteBookById() {
-        assertThatCode(() -> bookDao.getById(EXISTING_BOOK.getId()))
-                .doesNotThrowAnyException();
+        var book = bookDao.getById(EXISTING_BOOK.getId());
+        assertThat(book.isPresent()).isTrue();
 
         bookDao.deleteById(EXISTING_BOOK.getId());
 
-        assertThatThrownBy(() -> bookDao.getById(EXISTING_BOOK.getId()))
-                .isInstanceOf(EmptyResultDataAccessException.class);
+        book = bookDao.getById(EXISTING_BOOK.getId());
+        assertThat(book.isEmpty()).isTrue();
     }
 
     @DisplayName("возвращать ожидаемый список книг")

@@ -1,6 +1,5 @@
 package ru.otus.books.services;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.otus.books.dao.AuthorDao;
 import ru.otus.books.domain.Author;
@@ -20,20 +19,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Optional<Author> getById(long id) {
-        Author author;
-        try {
-            author = authorDao.getById(id);
-        } catch ( EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-        return Optional.of(author);
+        return authorDao.getById(id);
     }
 
     @Override
-    public void list() {
-        List<Author> authors = authorDao.getAll();
-        for (Author author : authors) {
-            ioService.outputString(author.toString());
-        }
+    public List<Author> getAll() {
+        return authorDao.getAll();
     }
+
 }

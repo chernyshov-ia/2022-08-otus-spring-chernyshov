@@ -5,17 +5,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.EmptyResultDataAccessException;
 import ru.otus.books.dao.GenreDao;
 import ru.otus.books.domain.Genre;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("сервис для работы с жанрами должен")
@@ -28,6 +27,7 @@ class GenreServiceImplTest {
     private IOService ioService;
 
     @MockBean
+    @SpyBean
     private GenreDao genreDao;
 
     private GenreService genreService;
@@ -44,26 +44,28 @@ class GenreServiceImplTest {
     @DisplayName("возвращать ожидаемый жанр по его id")
     @Test
     void shouldReturnExpectedGenreById() {
-        when(genreDao.getById(EXISTING_GENRE.getId())).thenReturn(EXISTING_GENRE);
-        Optional<Genre> actualGenre = genreService.getById(EXISTING_GENRE.getId());
-        assertThat(actualGenre.get()).usingRecursiveComparison().isEqualTo(EXISTING_GENRE);
+        when(genreDao.getById(EXISTING_GENRE.getId())).thenReturn(Optional.of(EXISTING_GENRE));
+        var actualGenre = genreService.getById(EXISTING_GENRE.getId());
+        assertThat(actualGenre.orElseThrow()).usingRecursiveComparison().isEqualTo(EXISTING_GENRE);
+        verify(genreDao).getById(EXISTING_GENRE.getId());
     }
 
-    @DisplayName("возвращать Optional.Empty() по id при возникновении EmptyResultDataAccessException")
+    @DisplayName("возвращать Optional.Empty() при несуществующем id")
     @Test
     void shouldReturnEmptyById() {
-        when(genreDao.getById(NOT_EXISTING_GENRE_ID)).thenThrow(EmptyResultDataAccessException.class);
-        Optional<Genre> actualGenre = genreService.getById(NOT_EXISTING_GENRE_ID);
+        when(genreDao.getById(NOT_EXISTING_GENRE_ID)).thenReturn(Optional.empty());
+        var actualGenre = genreService.getById(NOT_EXISTING_GENRE_ID);
         assertThat(actualGenre.isEmpty()).isTrue();
+        verify(genreDao).getById(NOT_EXISTING_GENRE_ID);
     }
 
-    @DisplayName("выбрасывает исключение, если исключение не EmptyResultDataAccessException")
+    @DisplayName("возвращать ожидаемый List авторов")
     @Test
-    void shouldRethrowUnexpectedException() {
-        doThrow(RuntimeException.class).when(genreDao).getById(anyLong());
-        assertThatCode(() -> {
-            Optional<Genre> actualGenre = genreService.getById(NOT_EXISTING_GENRE_ID);
-        }).hasNoSuppressedExceptions();
+    void shouldReturnList() {
+        when(genreDao.getAll()).thenReturn(List.of(EXISTING_GENRE));
+        var list = genreService.getAll();
+        assertThat(list).containsExactlyInAnyOrder(EXISTING_GENRE);
+        verify(genreDao).getAll();
     }
 
 }
