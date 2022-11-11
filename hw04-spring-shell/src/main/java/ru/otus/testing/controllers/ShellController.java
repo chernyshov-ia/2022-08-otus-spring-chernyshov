@@ -40,7 +40,7 @@ public class ShellController {
         var prompt = messageService.getMessage("app.queryName");
         var username = ioService.readStringWithPrompt(prompt + ": ");
         userContext.setUsername(username);
-        ioService.outputString("You name now is " + username);
+        ioService.outputString("You name now is " + userContext.getUsername());
     }
 
     @ShellMethod(value = "Start testing", key = {"start", "run", "execute", "s"})
