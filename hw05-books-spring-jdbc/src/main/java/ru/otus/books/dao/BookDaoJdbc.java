@@ -52,8 +52,8 @@ public class BookDaoJdbc implements BookDao {
                     "g.id as genre_id, g.name as genre_name,  " +
                     "a.id as author_id, a.name as author_name " +
                     "from books b " +
-                    "join genres g on g.id = b.genre_id " +
-                    "join authors a on a.id = b.author_id " +
+                    "inner join genres g on g.id = b.genre_id " +
+                    "inner join authors a on a.id = b.author_id " +
                     "where b.id = :id", params, new BookMapper()));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -67,8 +67,8 @@ public class BookDaoJdbc implements BookDao {
                 "g.id as genre_id, g.name as genre_name,  " +
                 "a.id as author_id, a.name as author_name " +
                 "from books b " +
-                "join genres g on g.id = b.genre_id " +
-                "join authors a on a.id = b.author_id", new BookMapper());
+                "inner join genres g on g.id = b.genre_id " +
+                "inner join authors a on a.id = b.author_id", new BookMapper());
     }
 
     @Override
@@ -82,12 +82,12 @@ public class BookDaoJdbc implements BookDao {
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
             long id = rs.getLong("id");
             String name = rs.getString("name");
-            long genre_id = rs.getLong("genre_id");
-            String genre_name = rs.getString("genre_name");
-            long author_id = rs.getLong("author_id");
-            String author_name = rs.getString("author_name");
-            var genre = new Genre(genre_id, genre_name);
-            var author = new Author(author_id, author_name);
+            long genreId = rs.getLong("genre_id");
+            String genreName = rs.getString("genre_name");
+            long authorId = rs.getLong("author_id");
+            String authorName = rs.getString("author_name");
+            var genre = new Genre(genreId, genreName);
+            var author = new Author(authorId, authorName);
             return new Book(id, name, author, genre );
         }
     }

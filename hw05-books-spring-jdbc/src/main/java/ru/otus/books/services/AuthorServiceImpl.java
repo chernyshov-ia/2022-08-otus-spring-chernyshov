@@ -10,11 +10,9 @@ import java.util.Optional;
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorDao authorDao;
-    private final IOService ioService;
 
-    public AuthorServiceImpl(AuthorDao authorDao, IOService ioService) {
+    public AuthorServiceImpl(AuthorDao authorDao) {
         this.authorDao = authorDao;
-        this.ioService = ioService;
     }
 
     @Override

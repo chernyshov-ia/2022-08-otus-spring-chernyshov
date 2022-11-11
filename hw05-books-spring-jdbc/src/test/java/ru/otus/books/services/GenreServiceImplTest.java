@@ -3,6 +3,7 @@ package ru.otus.books.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -18,28 +19,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("сервис для работы с жанрами должен")
-@SpringBootTest
+@SpringBootTest(classes = GenreServiceImpl.class)
 class GenreServiceImplTest {
     private static final Genre EXISTING_GENRE = new Genre(2, "novel");
     private static final long NOT_EXISTING_GENRE_ID = 1000;
 
     @MockBean
-    private IOService ioService;
-
-    @MockBean
     @SpyBean
     private GenreDao genreDao;
 
+    @Autowired
     private GenreService genreService;
-
-    @BeforeEach
-    void setUp() {
-        genreService = new GenreServiceImpl(genreDao, ioService);
-    }
-
-    @Configuration
-    public static class NestedConfiguration {
-    }
 
     @DisplayName("возвращать ожидаемый жанр по его id")
     @Test
@@ -55,7 +45,7 @@ class GenreServiceImplTest {
     void shouldReturnEmptyById() {
         when(genreDao.getById(NOT_EXISTING_GENRE_ID)).thenReturn(Optional.empty());
         var actualGenre = genreService.getById(NOT_EXISTING_GENRE_ID);
-        assertThat(actualGenre.isEmpty()).isTrue();
+        assertThat(actualGenre).isEmpty();
         verify(genreDao).getById(NOT_EXISTING_GENRE_ID);
     }
 

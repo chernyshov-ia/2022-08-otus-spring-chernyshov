@@ -12,17 +12,14 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
-    private final IOService ioService;
 
-    public BookServiceImpl(BookDao dao, IOService ioService) {
-        this.bookDao = dao;
-        this.ioService = ioService;
+    public BookServiceImpl(BookDao bookDao) {
+        this.bookDao = bookDao;
     }
 
     @Override
     public void deleteById(long id) {
         bookDao.deleteById(id);
-        ioService.outputString( String.format("Book{id=%d} deleted\n",id));
     }
 
     @Override
@@ -31,12 +28,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void create(String name, Author author, Genre genre) {
+    public Optional<Book> create(String name, Author author, Genre genre) {
         var id = bookDao.insert(new Book(name, author, genre));
-        var book = bookDao.getById(id);
-        if(book.isPresent()) {
-            ioService.outputString("ADDED: " + book.get());
-        }
+        return bookDao.getById(id);
     }
 
     @Override

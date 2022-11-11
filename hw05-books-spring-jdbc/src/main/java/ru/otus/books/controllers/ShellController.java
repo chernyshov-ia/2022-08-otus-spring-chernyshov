@@ -12,6 +12,8 @@ import ru.otus.books.services.BookService;
 import ru.otus.books.services.GenreService;
 import ru.otus.books.services.IOService;
 
+import java.util.Optional;
+
 import static java.util.Objects.isNull;
 
 @ShellComponent
@@ -38,6 +40,7 @@ public class ShellController {
     @ShellMethod(value = "Delete one book", key = {"delete", "del", "d"})
     public void delete(Long id) {
         bookService.deleteById(id);
+        ioService.outputString( String.format("Book{id=%d} deleted%n",id));
     }
 
     @ShellMethod(value = "Add new book", key = {"add", "new", "append", "a"})
@@ -59,7 +62,9 @@ public class ShellController {
             return;
         }
 
-        bookService.create(name, author.get(), genre.get());
+        Optional<Book> book = bookService.create(name, author.get(), genre.get());
+
+        book.ifPresent(value -> ioService.outputString("ADDED: " + value));
     }
 
     @ShellMethod(value = "Listing of all genres", key = {"genres"})

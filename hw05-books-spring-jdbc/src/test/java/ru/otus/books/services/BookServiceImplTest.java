@@ -1,13 +1,11 @@
 package ru.otus.books.services;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.EmptyResultDataAccessException;
 import ru.otus.books.dao.BookDao;
 import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Book;
@@ -15,12 +13,13 @@ import ru.otus.books.domain.Genre;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @DisplayName("сервис для работы с книгами должен")
-@SpringBootTest
+@SpringBootTest(classes = BookServiceImpl.class)
 class BookServiceImplTest {
     private static final long NOT_EXISTING_BOOK_ID = 10000;
 
@@ -29,21 +28,11 @@ class BookServiceImplTest {
             new Genre(1, "fantasy"));
 
     @MockBean
-    private IOService ioService;
-
-    @MockBean
     @SpyBean
     private BookDao bookDao;
 
-    private BookService bookService;
-
-    @Configuration
-    public static class NestedConfiguration { }
-
-    @BeforeEach
-    void setUp() {
-        bookService = new BookServiceImpl(bookDao, ioService);
-    }
+    @Autowired
+    BookService bookService;
 
     @DisplayName("при удалении дергается dao.deleteById() с темже id")
     @Test
@@ -58,7 +47,7 @@ class BookServiceImplTest {
     void shouldReturnEmptyWhenNotExist() {
         when(bookDao.getById(anyLong())).thenReturn(Optional.empty());
         var actualAuthor = bookService.getById(NOT_EXISTING_BOOK_ID);
-        assertThat(actualAuthor.isEmpty()).isTrue();
+        assertThat(actualAuthor).isEmpty();
         verify(bookDao).getById(anyLong());
     }
 
@@ -66,7 +55,7 @@ class BookServiceImplTest {
     @Test
     void shouldCallWithSameParamDaoWhenGetBookById() {
         when(bookDao.getById(anyLong())).thenReturn(Optional.of(EXISTING_BOOK));
-        var book = bookService.getById(EXISTING_BOOK.getId());
+        bookService.getById(EXISTING_BOOK.getId());
         verify(bookDao).getById(EXISTING_BOOK.getId());
     }
 
