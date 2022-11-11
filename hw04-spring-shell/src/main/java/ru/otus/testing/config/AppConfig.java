@@ -15,8 +15,8 @@ public class AppConfig {
     }
 
     @Bean
-    QuestionsResourceProvider resourceProvider( AppProps props ) {
-        return new FileQuestionsResourceProvider(props.getLocale(), props.getResourceFilename());
+    FilenameProvider filenameProvider(LocaleProvider localeProvider, AppProps props) {
+        return new FilenameProviderImpl(localeProvider, props.getResourceFilename());
     }
 
     @Bean

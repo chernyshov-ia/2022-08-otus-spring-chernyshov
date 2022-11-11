@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Component
 public class CsvTestLoader implements TestLoader {
 
-    private QuestionsResourceProvider resourceProvider;
+    private ResourceProvider resourceProvider;
 
-    public CsvTestLoader(QuestionsResourceProvider resourceProvider) {
+    public CsvTestLoader(ResourceProvider resourceProvider) {
         this.resourceProvider = resourceProvider;
     }
 

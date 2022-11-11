@@ -17,7 +17,7 @@ public class Application {
     private final UserContext userContext;
 
     public Application(TestRunnerService testRunnerService, IOService ioService, TestLoader testLoader,
-                       LocalizedMessageService messageService, AppProps props, QuestionsResourceProvider resourceProvider,
+                       LocalizedMessageService messageService, AppProps props, ResourceProvider resourceProvider,
                        UserContext userContext) {
         this.testRunnerService = testRunnerService;
         this.ioService = ioService;

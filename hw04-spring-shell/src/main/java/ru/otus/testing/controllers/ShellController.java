@@ -15,15 +15,13 @@ public class ShellController {
     private final Application application;
     private final IOService ioService;
     private final LocalizedMessageService messageService;
-    private final AppProps props;
     private final UserContext userContext;
 
     public ShellController(Application application, IOService ioService, LocalizedMessageService messageService,
-                           AppProps props, UserContext userContext) {
+                           UserContext userContext) {
         this.application = application;
         this.ioService = ioService;
         this.messageService = messageService;
-        this.props = props;
         this.userContext = userContext;
     }
 

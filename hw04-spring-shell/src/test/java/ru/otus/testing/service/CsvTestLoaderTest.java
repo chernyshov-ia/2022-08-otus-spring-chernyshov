@@ -3,6 +3,7 @@ package ru.otus.testing.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
@@ -10,14 +11,19 @@ import ru.otus.testing.domain.TestData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class CsvTestLoaderTest {
     private final static String CSV_FILE_1 = "test1.csv";
     private TestData testData;
+
+    @MockBean
+    private FilenameProvider filenameProvider;
+
+    private ResourceProvider resourceProvider;
 
     @Configuration
     public static class NestedConfiguration {
@@ -44,11 +50,13 @@ class CsvTestLoaderTest {
 
         testData = new TestData("Test1", questions);
 
+        when(filenameProvider.getFilename()).thenReturn(CSV_FILE_1);
+
+        resourceProvider = new FileResourceProvider(filenameProvider);
     }
 
     @Test
     void when_loading_test_from_csv_then_test_loading_as_expected() {
-        var resourceProvider = new FileQuestionsResourceProvider(Locale.ENGLISH, CSV_FILE_1);
         var loader = new CsvTestLoader(resourceProvider);
         var loadedTest = loader.load();
         assertThat(loadedTest).usingRecursiveComparison().isEqualTo(testData);
