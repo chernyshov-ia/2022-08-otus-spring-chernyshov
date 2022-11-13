@@ -1,18 +1,13 @@
 package ru.otus.testing;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import org.springframework.stereotype.Component;
 import ru.otus.testing.domain.Answer;
 import ru.otus.testing.domain.Question;
 
-import java.io.*;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 public class CsvTestLoaderStrategy implements TestLoaderStrategy {
 

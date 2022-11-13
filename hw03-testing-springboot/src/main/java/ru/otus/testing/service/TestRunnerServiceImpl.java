@@ -1,8 +1,6 @@
 package ru.otus.testing.service;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.otus.testing.config.AppProps;
 import ru.otus.testing.domain.Question;
 import ru.otus.testing.domain.TestData;
 import ru.otus.testing.domain.TestResult;
@@ -10,13 +8,11 @@ import ru.otus.testing.domain.TestResult;
 @Service
 public class TestRunnerServiceImpl implements TestRunnerService {
     private final IOService ioService;
-    private final MessageSource messageSource;
-    private final AppProps props;
+    private final LocalizedMessageService messageService;
 
-    public TestRunnerServiceImpl(IOService ioService, MessageSource messageSource, AppProps props) {
+    public TestRunnerServiceImpl(IOService ioService, LocalizedMessageService messageService) {
         this.ioService = ioService;
-        this.messageSource = messageSource;
-        this.props = props;
+        this.messageService = messageService;
     }
 
     private boolean askQuestion(Question question) {
@@ -27,8 +23,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
             ioService.outputString(String.format("  %d. %s", i + 1, question.getAnswer(i).getText()));
         }
 
-        var enterNumberOfAnswerText = messageSource.getMessage("runner.enterAnswer", new String[]{},
-                "Enter number of answer", props.getLocale()) + ": ";
+        var enterNumberOfAnswerText = messageService.getMessage("runner.enterAnswer") + ": ";
 
         try {
             response = ioService.readIntWithPrompt(enterNumberOfAnswerText);
@@ -43,7 +38,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
     public TestResult perform(TestData test) {
         int rightAnswers = 0;
 
-        var msg = messageSource.getMessage("runner.welcome", new String[]{}, "Let's start", props.getLocale());
+        var msg = messageService.getMessage("runner.welcome");
 
         ioService.outputString(msg + ": " + test.getDescription());
 

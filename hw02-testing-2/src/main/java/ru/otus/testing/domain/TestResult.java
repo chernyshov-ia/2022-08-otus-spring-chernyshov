@@ -3,7 +3,6 @@ package ru.otus.testing.domain;
 public class TestResult {
     private final int rightAnswers;
     private final int totalQuestions;
-    private static final int PASS_THRESHOLD_PERCENTS = 80;
 
     public TestResult(int rightAnswers, int totalQuestions) {
         this.rightAnswers = rightAnswers;
@@ -22,7 +21,7 @@ public class TestResult {
         return  (int) Math.round(100 * rightAnswers / (totalQuestions * 1.00));
     }
 
-    public boolean isPassed() {
-       return getRightAnswersRationPercents() >= PASS_THRESHOLD_PERCENTS;
+    public boolean isPassed(int passThresholdPercents) {
+       return getRightAnswersRationPercents() >= passThresholdPercents;
     }
 }

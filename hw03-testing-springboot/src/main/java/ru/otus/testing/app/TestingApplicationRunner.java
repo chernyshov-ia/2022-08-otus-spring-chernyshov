@@ -1,4 +1,4 @@
-package ru.otus.testing;
+package ru.otus.testing.app;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,7 +13,7 @@ public class TestingApplicationRunner implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         application.run();
     }
 }

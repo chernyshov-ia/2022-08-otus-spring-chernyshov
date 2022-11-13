@@ -8,16 +8,16 @@ import java.util.Locale;
 public class AppProps {
     private Locale locale;
 
-    private String filename;
+    private String resourceFilename;
 
     private int passThresholdPercents;
 
-    public String getFilename() {
-        return filename;
+    public String getResourceFilename() {
+        return resourceFilename;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setResourceFilename(String resourceFilename) {
+        this.resourceFilename = resourceFilename;
     }
 
     public Locale getLocale() {

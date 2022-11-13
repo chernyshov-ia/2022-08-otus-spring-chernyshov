@@ -1,0 +1,7 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  sql:
+    init:
+      data-locations: testdata.sql
