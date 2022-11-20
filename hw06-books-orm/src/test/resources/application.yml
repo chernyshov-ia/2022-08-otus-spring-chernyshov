@@ -3,6 +3,9 @@ spring:
     init:
       mode: always
       data-locations: testdata.sql
+  shell:
+    interactive:
+      enabled: false
 
 
 
