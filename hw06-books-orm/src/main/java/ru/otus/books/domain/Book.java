@@ -33,8 +33,7 @@ public class Book {
     private Genre genre;
 
     @BatchSize(size = 5)
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id")
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "book")
     private List<BookComment> comments;
 
     public Book(String name, Author author, Genre genre) {
