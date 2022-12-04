@@ -24,11 +24,11 @@ public class Book {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
@@ -52,14 +52,4 @@ public class Book {
         this.comments = comments;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%d. %s ( %s / %s )", getId(), getName(),
-                getAuthor().getName(), getGenre().getName());
-    }
-
-    public String toStringWithComments() {
-        return String.format("%d. %s ( %s / %s )%nComments: %s", getId(), getName(),
-                getAuthor().getName(), getGenre().getName(), getComments());
-    }
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Book;
 import ru.otus.books.domain.Genre;
+import ru.otus.books.dto.BookDto;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
 import ru.otus.books.repositories.GenreRepository;
@@ -30,7 +31,7 @@ class BookServiceImplTest {
     private static final String NEW_NAME = "New name";
 
     private static final Book EXISTING_BOOK = new Book(EXISTING_BOOK_ID, "Hobbit",
-            new Author(3, "John Ronald Reuel Tolkien" ),
+            new Author(3, "John Ronald Reuel Tolkien"),
             new Genre(1, "fantasy"), List.of());
 
     @MockBean
@@ -104,8 +105,10 @@ class BookServiceImplTest {
     @Test
     void shouldReturnAllBooks() {
         when(repository.findAll()).thenReturn(List.of(EXISTING_BOOK));
-        List<Book> all = bookService.findAll();
-        assertThat(List.of(EXISTING_BOOK)).usingRecursiveComparison().isEqualTo(all);
+        List<BookDto> all = bookService.findAll();
+
+        assertThat(List.of(BookDto.fromBookWithoutComments(EXISTING_BOOK)))
+                .usingRecursiveComparison().isEqualTo(all);
     }
 
 }
