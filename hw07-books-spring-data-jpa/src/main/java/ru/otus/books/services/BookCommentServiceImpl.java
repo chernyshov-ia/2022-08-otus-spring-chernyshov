@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class BookCommentServiceImpl implements BookCommentService{
     private final BookCommentRepository repository;
     private final BookRepository bookRepository;
@@ -31,6 +30,7 @@ public class BookCommentServiceImpl implements BookCommentService{
         return repository.findById(id);
     }
 
+    @Transactional
     @Override
     public void deleteById(long id) {
         repository.deleteById(id);
@@ -48,9 +48,10 @@ public class BookCommentServiceImpl implements BookCommentService{
         }
     }
 
+    @Transactional
     @Override
     public Optional<BookComment> create(String text, long bookId) {
-        if (text == null && text.equals("")) {
+        if (text == null || text.equals("")) {
             return Optional.empty();
         }
 

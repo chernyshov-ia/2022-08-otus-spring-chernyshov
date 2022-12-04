@@ -1,14 +1,14 @@
 package ru.otus.books.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.otus.books.domain.Book;
 import ru.otus.books.domain.BookComment;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BookCommentRepository {
+@Repository
+public interface BookCommentRepository extends JpaRepository<BookComment, Long> {
     List<BookComment> findByBookId(long bookId);
-    Optional<BookComment> findById(long id);
-    BookComment save(BookComment comment);
-    void deleteById(long id);
 }

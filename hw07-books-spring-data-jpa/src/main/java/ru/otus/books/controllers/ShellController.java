@@ -5,9 +5,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.books.domain.Author;
-import ru.otus.books.domain.Book;
 import ru.otus.books.domain.BookComment;
 import ru.otus.books.domain.Genre;
+import ru.otus.books.dto.BookDto;
 import ru.otus.books.services.AuthorService;
 import ru.otus.books.services.BookCommentService;
 import ru.otus.books.services.BookService;
@@ -31,7 +31,7 @@ public class ShellController {
     }
 
     @ShellMethod(value = "Listing of all books", key = {"list", "l"})
-    public List<Book> list() {
+    public List<BookDto> list() {
         return bookService.findAll();
     }
 
@@ -44,8 +44,8 @@ public class ShellController {
 
     @ShellMethod(value = "Show one book", key = {"book"})
     public String book(Long id) {
-        Optional<Book> book = bookService.findById(id);
-        return book.isPresent() ? book.get().toStringWithComments() : "not found";
+        Optional<BookDto> book = bookService.findById(id);
+        return book.isPresent() ? book.get().toString() : "not found";
     }
 
     @ShellMethod(value = "Add new book", key = {"add", "new", "append", "a"})
@@ -53,14 +53,14 @@ public class ShellController {
                          @ShellOption(value = {"--author"}) Long authorId,
                          @ShellOption(value = {"--genre"}) Long genreId) {
 
-        Optional<Book> book = bookService.create(name, authorId, genreId);
+        Optional<BookDto> book = bookService.create(name, authorId, genreId);
 
         return book.isPresent() ? book.get().toString() : "not created";
     }
 
     @ShellMethod(value = "Update book", key = {"update", "upd"})
     public String update(Long id, String name) {
-        Optional<Book> book = bookService.updateName(id, name);
+        Optional<BookDto> book = bookService.updateName(id, name);
         return book.isPresent() ? book.get().toString() : "not updated";
     }
 
