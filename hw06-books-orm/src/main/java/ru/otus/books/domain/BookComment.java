@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 
-@Entity(name = "comments")
+@Entity
 @Table(name = "comments")
 @Getter
 @Setter
