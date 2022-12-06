@@ -83,7 +83,7 @@ public class BookServiceImpl implements BookService {
             return Optional.empty();
         }
 
-        Book book = optionalBook.orElseThrow();
+        Book book = optionalBook.orElseThrow(() -> new BookServiceException("Book not found"));
 
         book.setName(name);
 
