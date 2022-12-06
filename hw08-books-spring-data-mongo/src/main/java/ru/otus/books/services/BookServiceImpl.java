@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.books.domain.Book;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.repositories.AuthorRepository;
+import ru.otus.books.repositories.BookCommentRepository;
 import ru.otus.books.repositories.BookRepository;
 import ru.otus.books.repositories.GenreRepository;
 
@@ -17,11 +18,13 @@ import static java.util.Objects.isNull;
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository repository;
+    private final BookCommentRepository commentRepository;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
-    public BookServiceImpl(BookRepository repository, AuthorRepository authorRepository, GenreRepository genreRepository) {
+    public BookServiceImpl(BookRepository repository, BookCommentRepository commentRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
         this.repository = repository;
+        this.commentRepository = commentRepository;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
     }
@@ -49,6 +52,9 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public void deleteById(String id) {
+        var book = repository.findById(id).orElseThrow(()->new BookServiceException("Book not found"));
+        var comments = book.getComments();
+        commentRepository.deleteAll(comments);
         repository.deleteById(id);
     }
 
@@ -83,7 +89,7 @@ public class BookServiceImpl implements BookService {
             return Optional.empty();
         }
 
-        Book book = optionalBook.orElseThrow();
+        Book book = optionalBook.get();
 
         book.setName(name);
 

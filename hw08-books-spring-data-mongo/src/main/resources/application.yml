@@ -7,8 +7,8 @@ spring:
       database: otus
       host: 127.0.0.1
       port: 27018
-      username: mongoadmin
-      password: secret
+      username: user
+      password: password
       authentication-database: admin
 
 mongock:

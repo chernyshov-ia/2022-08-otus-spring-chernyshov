@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class BookCommentServiceImpl implements BookCommentService{
+public class BookCommentServiceImpl implements BookCommentService {
     private final BookCommentRepository repository;
     private final BookRepository bookRepository;
 
@@ -22,8 +22,8 @@ public class BookCommentServiceImpl implements BookCommentService{
 
     @Override
     public List<BookComment> findByBookId(String bookId) {
-        // return repository.findByBookId(bookId);
-        return List.of();
+        var book = bookRepository.findById(bookId).orElseThrow(() -> new BookServiceException("Book not found"));
+        return book.getComments();
     }
 
     @Override
@@ -34,18 +34,31 @@ public class BookCommentServiceImpl implements BookCommentService{
     @Transactional
     @Override
     public void deleteById(String id) {
+        var comment = repository.findById(id).orElseThrow(() -> new BookServiceException("Comment not found"));
+        var book = comment.getBook();
+        book.getComments().remove(comment);
+        bookRepository.save(book);
         repository.deleteById(id);
     }
 
     @Override
     public Optional<BookComment> updateTextById(String id, String text) {
         Optional<BookComment> optionalComment = repository.findById(id);
-        if(optionalComment.isEmpty()){
+        if (optionalComment.isEmpty()) {
             return Optional.empty();
         } else {
-            var book = optionalComment.orElseThrow();
-            book.setText(text);
-            return Optional.of(repository.save(book));
+            var comment = optionalComment.get();
+            comment.setText(text);
+
+            var book = comment.getBook();
+            var commentOptional = book.getComments().stream().filter(comment::equals).findFirst();
+            if(commentOptional.isPresent()) {
+                var bookComment = commentOptional.get();
+                bookComment.setText(text);
+                bookRepository.save(book);
+            }
+
+            return Optional.of(repository.save(comment));
         }
     }
 
@@ -61,9 +74,13 @@ public class BookCommentServiceImpl implements BookCommentService{
             return Optional.empty();
         }
 
-        Book book = optionalBook.orElseThrow();
-        BookComment comment = new BookComment(text, book);
+        Book book = optionalBook.get();
 
-        return Optional.of(repository.save(comment));
+        var comment = repository.save(new BookComment(text, book));
+
+        book.getComments().add(comment);
+        bookRepository.save(book);
+
+        return Optional.of(comment);
     }
 }

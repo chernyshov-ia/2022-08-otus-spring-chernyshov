@@ -21,6 +21,6 @@ public class Author {
 
     @Override
     public String toString() {
-        return String.format("%d. %s", getId(), getName());
+        return String.format("%s. %s", getId(), getName());
     }
 }

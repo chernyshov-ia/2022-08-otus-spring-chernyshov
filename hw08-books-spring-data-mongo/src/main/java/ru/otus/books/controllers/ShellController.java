@@ -88,7 +88,7 @@ public class ShellController {
     @ShellMethod(value = "Delete one comment", key = {"deletecomment", "delcomment", "delete_comment", "del_comment"})
     public String deleteComment(String id) {
         commentService.deleteById(id);
-        return String.format("Comment{id=%d} deleted%n", id);
+        return String.format("Comment{id=%s} deleted%n", id);
     }
 
     @ShellMethod(value = "Update one comment", key = {"updatecomment", "updcomment", "update_comment", "upd_comment"})
