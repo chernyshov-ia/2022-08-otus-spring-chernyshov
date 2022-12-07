@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${book.name}">Книга</title>
+    <style type="text/css">
+
+        .book {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        .book tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+            width: auto;
+        }
+
+        body {
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<a th:href="@{/books}" href="/books">Список книг</a>
+<br>
+<br>
+<table class="book">
+    <tbody>
+    <tr>
+        <td>ID</td>
+        <td th:text="${book.id}">1</td>
+    </tr>
+    <tr>
+        <td>Название</td>
+        <td th:text="${book.name}">Название</td>
+    </tr>
+    <tr>
+        <td>Автор</td>
+        <td th:text="${book.author.name}">Автор</td>
+    </tr>
+    <tr>
+        <td>Жанр</td>
+        <td th:text="${book.genre.name}">Жанр</td>
+    </tr>
+    </tbody>
+</table>
+<br><br>
+
+<a th:href="@{/books/edit(id=${book.id})}" href="edit.html">Редактировать</a>
+<br><br>
+
+<form id="delete-form" action="" th:action="@{/books/delete(id=${book.id})}" method="post" th:method="post">
+    <button type="submit">Удалить книгу!</button>
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Библиотека</title>
+    <style type="text/css">
+
+        .books {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+            width: auto;
+        }
+
+        body {
+            background-image: url("../static/books.png");
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+        h3 {
+            margin-top: 170px;
+        }
+
+    </style>
+
+    <style type="text/css" th:inline="text">
+        [[body]] {
+            background-image: url([[@{/books.png}]]);
+            background-repeat: no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h3>Список книг:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Автор</th>
+        <th>Жанр</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}">1</td>
+        <td th:text="${book.name}">Name</td>
+        <td th:text="${book.author.name}">Author</td>
+        <td th:text="${book.genre.name}">Genre</td>
+        <td>
+            <a th:href="@{/books/view(id=${book.id})}" href="view.html">Открыть</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

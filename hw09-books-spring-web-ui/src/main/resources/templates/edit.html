@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${book.name}">Книга</title>
+    <style type="text/css">
+
+        .book {
+            border: 1px solid steelblue;
+            width: 700px;
+            border-collapse: collapse;
+        }
+
+        .book tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+            width: auto;
+        }
+
+        body {
+            padding: 2px;
+            padding-left: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<a th:href="@{/books}" href="/books">Список книг</a>
+<br>
+<br>
+<form id="edit-form" action="" th:action="@{/books/edit(id=${book.id})}" method="post" th:method="post">
+    <table class="book">
+        <tbody>
+        <tr>
+            <td>ID</td>
+            <td><input type="text" name="id" th:value="${book.id}" readonly="true"></input></td>
+        </tr>
+        <tr>
+            <td>Название</td>
+            <td><input type="text" name="name" th:value="${book.name}"></input></td>
+        </tr>
+        <tr>
+            <td>Автор</td>
+            <td>
+                <select name="author">
+                    <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.name}" th:selected="(${author.id} == ${book.author.id})"></option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Жанр</td>
+            <td>
+                <select name="genre">
+                    <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}" th:selected="(${genre.id} == ${book.genre.id})"></option>
+                </select>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    <br><br>
+    <button type="submit">Сохранить</button>
+</form>
+<br><br>
+
+</body>
+</html>
