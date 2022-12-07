@@ -17,6 +17,18 @@
             width: auto;
         }
 
+        .comments {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        .comments tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+            width: auto;
+        }
+
         body {
             padding: 2px;
             padding-left: 30px;
@@ -56,6 +68,16 @@
 <form id="delete-form" action="" th:action="@{/books/delete(id=${book.id})}" method="post" th:method="post">
     <button type="submit">Удалить книгу!</button>
 </form>
+
+<br><br>
+<h3>Комментарии:</h3>
+<table class="comments">
+    <tbody>
+    <tr th:each="c : ${book.comments}">
+        <td th:text="${c.text}"></td>
+    </tr>
+    </tbody>
+</table>
 
 
 </body>

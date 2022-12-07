@@ -10,6 +10,8 @@ import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
 import ru.otus.books.repositories.GenreRepository;
 
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -33,6 +35,7 @@ public class BookController {
     @RequestMapping("/view")
     public String getBook(@RequestParam("id") Long id, Model model) {
         var book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
+        book.getComments().size();
         model.addAttribute("book", book);
         return "book";
     }
