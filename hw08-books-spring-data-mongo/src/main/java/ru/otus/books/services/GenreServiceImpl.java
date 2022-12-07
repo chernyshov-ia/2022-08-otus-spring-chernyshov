@@ -24,5 +24,4 @@ public class GenreServiceImpl implements GenreService {
     public List<Genre> findAll() {
         return repository.findAll();
     }
-
 }
