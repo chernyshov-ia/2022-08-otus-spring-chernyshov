@@ -91,6 +91,7 @@ class BookControllerTest {
 
     @Test
     void shouldSaveExistingBook() throws Exception {
+        given(bookRepository.save(any())).willReturn(BOOK_1);
         given(bookRepository.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
         given(genreRepository.findById(BOOK_1.getGenre().getId())).willReturn(Optional.of(BOOK_1.getGenre()));
         given(authorRepository.findById(BOOK_1.getAuthor().getId())).willReturn(Optional.of(BOOK_1.getAuthor()));
