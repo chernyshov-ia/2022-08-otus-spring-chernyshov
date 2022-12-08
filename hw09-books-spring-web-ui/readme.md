@@ -23,3 +23,11 @@ Web-приложение полностью на стеке Spring
 
 __Заметки по выполнению__
 
+http://localhost:8080
+
+http://localhost:8080/books
+
+http://localhost:8080/books/1
+
+http://localhost:8080/books/1/edit
+
