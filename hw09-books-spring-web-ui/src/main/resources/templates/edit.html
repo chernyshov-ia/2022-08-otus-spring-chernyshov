@@ -32,12 +32,12 @@
 <a th:href="@{/books}" href="/books">Список книг</a>
 <br>
 <br>
-<form id="edit-form" action="" th:action="@{/books/edit(id=${book.id})}" method="post" th:method="post">
+<form id="edit-form" action="" th:action="@{/books/save}" method="post" th:method="post">
     <table class="book">
         <tbody>
         <tr>
             <td>ID</td>
-            <td><input type="text" th:value="${book.id}" readonly="true"></input></td>
+            <td><input type="text" name="id" th:value="${book.id}" readonly="true"></input></td>
         </tr>
         <tr>
             <td>Название</td>
@@ -54,9 +54,9 @@
                 <select name="authorId">
                     <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.name}" th:selected="(${author.id} == ${book.authorId})"></option>
                 </select>
-<!--                <ul>-->
-<!--                    <li th:each="err : ${#fields.errors('book.authorId')}" th:text="${err}" class="error" />-->
-<!--                </ul>-->
+                <ul>
+                    <li th:each="err : ${#fields.errors('book.authorId')}" th:text="${err}" class="error" />
+                </ul>
             </td>
         </tr>
 
@@ -66,9 +66,9 @@
                 <select name="genreId">
                     <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}" th:selected="(${genre.id} == ${book.genreId})"></option>
                 </select>
-<!--                <ul>-->
-<!--                    <li th:each="err : ${#fields.errors('book.genreId')}" th:text="${err}" class="error" />-->
-<!--                </ul>-->
+                <ul>
+                    <li th:each="err : ${#fields.errors('book.genreId')}" th:text="${err}" class="error" />
+                </ul>
             </td>
         </tr>
 

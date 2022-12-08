@@ -1,9 +1,6 @@
 package ru.otus.books.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -17,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

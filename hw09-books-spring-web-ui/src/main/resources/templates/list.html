@@ -44,7 +44,7 @@
 
 <h3>Список книг:</h3>
 
-<a th:href="@{/books/edit}" href="edit.html">Создать новую книгу</a>
+<a th:href="@{/books/new}" href="edit.html">Создать новую книгу</a>
 <br><br>
 
 <table class="books">
@@ -64,7 +64,7 @@
         <td th:text="${book.author.name}">Author</td>
         <td th:text="${book.genre.name}">Genre</td>
         <td>
-            <a th:href="@{/books/view(id=${book.id})}" href="view.html">Открыть</a>
+            <a th:href="@{/books/__${book.id}__}" href="view.html">Открыть</a>
         </td>
     </tr>
     </tbody>

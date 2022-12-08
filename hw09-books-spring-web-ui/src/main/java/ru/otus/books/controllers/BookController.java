@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.books.domain.Book;
-import ru.otus.books.domain.BookComment;
 import ru.otus.books.dto.BookCommentDto;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.repositories.AuthorRepository;
@@ -35,8 +34,8 @@ public class BookController {
         return "list";
     }
 
-    @RequestMapping("/view")
-    public String viewPage(@RequestParam("id") Long id, Model model) {
+    @RequestMapping("/{id}")
+    public String viewPage(@PathVariable("id") Long id, Model model) {
         var book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
         model.addAttribute("book", book);
         var comments = book.getComments().stream()
@@ -46,14 +45,14 @@ public class BookController {
         return "book";
     }
 
-    @PostMapping("/delete")
-    public String deleteBook(@RequestParam("id") Long id) {
+    @PostMapping("/{id}/delete")
+    public String deleteBook(@PathVariable("id") Long id) {
         bookRepository.deleteById(id);
         return "redirect:/books";
     }
 
-    @GetMapping("/edit")
-    public String editPage(@RequestParam( value = "id", required = false) Long id, Model model) {
+    @GetMapping( path = {"/{id}/edit", "/new"})
+    public String editPage(@PathVariable( value = "id", required = false) Long id, Model model) {
         model.addAttribute("authors", authorRepository.findAll());
         model.addAttribute("genres", genreRepository.findAll());
         if (id == null) {
@@ -65,8 +64,8 @@ public class BookController {
         return "edit";
     }
 
-    @PostMapping("/edit")
-    public String editBook(@Valid @ModelAttribute("book") BookDto book, BindingResult bindingResult, Model model) {
+    @PostMapping("/save")
+    public String saveBook(@Valid @ModelAttribute("book") BookDto book, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("authors", authorRepository.findAll());
@@ -87,9 +86,9 @@ public class BookController {
             bookDomain.setAuthor(author);
             bookDomain.setGenre(genre);
         }
-        bookRepository.save(bookDomain);
+        bookDomain = bookRepository.save(bookDomain);
 
-        return "redirect:/books/view?id=" + bookDomain.getId();
+        return "redirect:/books/" + bookDomain.getId();
     }
 
 }

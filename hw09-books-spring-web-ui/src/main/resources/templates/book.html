@@ -62,10 +62,10 @@
 </table>
 <br><br>
 
-<a th:href="@{/books/edit(id=${book.id})}" href="edit.html">Редактировать</a>
+<a th:href="@{/books/__${book.id}__/edit}" href="edit.html">Редактировать</a>
 <br><br>
 
-<form id="delete-form" action="" th:action="@{/books/delete(id=${book.id})}" method="post" th:method="post">
+<form id="delete-form" action="" th:action="@{/books/__${book.id}__/delete}" method="post" th:method="post">
     <button type="submit">Удалить книгу!</button>
 </form>
 
