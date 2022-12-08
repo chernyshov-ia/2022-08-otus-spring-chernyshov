@@ -73,12 +73,11 @@
 <h3>Комментарии:</h3>
 <table class="comments">
     <tbody>
-    <tr th:each="c : ${book.comments}">
+    <tr th:each="c : ${comments}">
         <td th:text="${c.text}"></td>
     </tr>
     </tbody>
 </table>
-
 
 </body>
 </html>

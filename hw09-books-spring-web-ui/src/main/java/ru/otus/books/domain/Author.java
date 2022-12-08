@@ -14,10 +14,10 @@ public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final long id;
+    private long id;
 
     @Column(name = "name")
-    private final String name;
+    private String name;
 
     @Override
     public String toString() {
