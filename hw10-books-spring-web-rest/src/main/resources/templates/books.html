@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Библиотека</title>
+    <link rel="stylesheet" type="text/css" href="/app.css">
+    <script type="text/javascript" src="/app.js"></script>
+</head>
+<body onload="_onload()">
+
+<div id="book-list">
+    <div class="row">
+        <span><button onclick="reload()">Refresh</button></span>
+        <span><button onclick="">Создать книгу</button></span>
+    </div>
+    <div class="row">
+        <h3>Список книг:</h3>
+        <table class="books">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Жанр</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody id="books-table-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="book-card">
+    <div class="row">
+        <h3 id="book-card-header-text">Книга</h3>
+        <table class="book-card-table">
+            <tbody>
+            <tr>
+                <td>ID</td>
+                <td id="book-card-book-id"></td>
+            </tr>
+            <tr>
+                <td>Название</td>
+                <td id="book-card-book-name"></td>
+            </tr>
+            <tr>
+                <td>Автор</td>
+                <td id="book-card-book-author"></td>
+            </tr>
+            <tr>
+                <td>Жанр</td>
+                <td id="book-card-book-genre"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <span><button id="book-card-button-close" onclick="closeCard()">Закрыть</button></span>
+        <span><button id="book-card-button-edit" onclick="editBook()">Изменить</button></span>
+        <span><button id="book-card-button-cancel" onclick="cancelEditBook()">Отменить</button></span>
+        <span><button id="book-card-button-save" onclick="saveBook()">Сохранить</button></span>
+    </div>
+    <div class="row">
+        <span><button id="book-card-button-delete" onclick="deleteBook()">Удалить</button></span>
+    </div>
+</div>
+
+</body>
+</html>
