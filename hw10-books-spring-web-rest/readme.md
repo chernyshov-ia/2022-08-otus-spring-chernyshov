@@ -30,5 +30,3 @@ http://localhost:8080/books
 
 http://localhost:8080/books/1
 
-http://localhost:8080/books/1/edit
-
