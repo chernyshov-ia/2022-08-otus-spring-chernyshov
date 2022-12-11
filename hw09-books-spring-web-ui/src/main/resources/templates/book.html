@@ -52,11 +52,11 @@
     </tr>
     <tr>
         <td>Автор</td>
-        <td th:text="${book.author.name}">Автор</td>
+        <td th:text="${book.authorName}">Автор</td>
     </tr>
     <tr>
         <td>Жанр</td>
-        <td th:text="${book.genre.name}">Жанр</td>
+        <td th:text="${book.genreName}">Жанр</td>
     </tr>
     </tbody>
 </table>
@@ -73,7 +73,7 @@
 <h3>Комментарии:</h3>
 <table class="comments">
     <tbody>
-    <tr th:each="c : ${comments}">
+    <tr th:each="c : ${book.getComments()}">
         <td th:text="${c.text}"></td>
     </tr>
     </tbody>

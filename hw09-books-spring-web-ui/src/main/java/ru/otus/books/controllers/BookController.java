@@ -13,7 +13,6 @@ import ru.otus.books.services.GenreService;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/books")
 public class BookController {
     private final BookService bookService;
     private final AuthorService authorService;
@@ -25,27 +24,27 @@ public class BookController {
         this.genreService = genreService;
     }
 
-    @GetMapping("")
+    @GetMapping("/books")
     public String listPage(Model model) {
         var books = bookService.findAll();
         model.addAttribute("books", books);
         return "list";
     }
 
-    @RequestMapping("/{id}")
+    @RequestMapping("/books/{id}")
     public String viewPage(@PathVariable("id") Long id, Model model) {
         var book = bookService.findById(id).orElseThrow(NotFoundException::new);
         model.addAttribute("book", book);
         return "book";
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/books/{id}/delete")
     public String deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return "redirect:/books";
     }
 
-    @GetMapping( path = "/{id}/edit")
+    @GetMapping( path = "/books/{id}/edit")
     public String editPage(@PathVariable( value = "id", required = true) Long id, Model model) {
         model.addAttribute("authors", authorService.findAll());
         model.addAttribute("genres", genreService.findAll());
@@ -55,7 +54,7 @@ public class BookController {
         return "edit";
     }
 
-    @GetMapping( path = "/new")
+    @GetMapping( path = "/books/new")
     public String newPage(Model model) {
         model.addAttribute("authors", authorService.findAll());
         model.addAttribute("genres", genreService.findAll());
@@ -65,7 +64,7 @@ public class BookController {
     }
 
 
-    @PostMapping("/save")
+    @PostMapping("/books/save")
     public String saveBook(@Valid @ModelAttribute("book") BookDto book, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
@@ -74,14 +73,7 @@ public class BookController {
             return "edit";
         }
 
-        BookDto newBook;
-
-        if (book.getId() == null) {
-            newBook = bookService.create(book.getName(), book.getAuthorId(), book.getAuthorId());
-        } else {
-            newBook = bookService.update(book.getId(), book.getName(), book.getAuthorId(), book.getAuthorId());
-        }
-
+        BookDto newBook = bookService.save(book);
         return "redirect:/books/" + newBook.getId();
     }
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 public class BookDto {
     private Long id;
@@ -25,9 +25,11 @@ public class BookDto {
 
     @NotNull(message = "Автор должен быть указан")
     private Long authorId;
+    private String authorName;
 
     @NotNull(message = "Жанр должен быть указан")
     private Long genreId;
+    private String genreName;
 
     private List<BookCommentDto> comments;
 
@@ -40,7 +42,9 @@ public class BookDto {
                 .id(book.getId())
                 .name(book.getName())
                 .authorId(book.getAuthor().getId())
+                .authorName(book.getAuthor().getName())
                 .genreId(book.getGenre().getId())
+                .genreName(book.getGenre().getName())
                 .build();
     }
 
@@ -53,7 +57,9 @@ public class BookDto {
                 .id(book.getId())
                 .name(book.getName())
                 .authorId(book.getAuthor().getId())
+                .authorName(book.getAuthor().getName())
                 .genreId(book.getGenre().getId())
+                .genreName(book.getGenre().getName())
                 .comments(commentsDto)
                 .build();
     }

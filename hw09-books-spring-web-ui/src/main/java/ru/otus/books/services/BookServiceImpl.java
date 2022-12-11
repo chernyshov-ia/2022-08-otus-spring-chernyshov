@@ -50,26 +50,23 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto create(String name, Long authorId, Long genreId) {
-        var genre = genreRepository.findById(genreId).orElseThrow(NotFoundException::new);
-        var author = authorRepository.findById(authorId).orElseThrow(NotFoundException::new);
+    public BookDto save(BookDto book) {
+        if(book == null) {
+            throw new IllegalArgumentException("book can't be null");
+        }
+        var genre = genreRepository.findById(book.getGenreId()).orElseThrow(NotFoundException::new);
+        var author = authorRepository.findById(book.getAuthorId()).orElseThrow(NotFoundException::new);
 
-        var book = new Book(name, author, genre);
+        Book bookDomain;
+        if (book.getId() == null) {
+            bookDomain = new Book(book.getName(), author, genre);
+        } else {
+            bookDomain = bookRepository.findById(book.getId()).orElseThrow(NotFoundException::new);
+            bookDomain.setName(book.getName());
+            bookDomain.setAuthor(author);
+            bookDomain.setGenre(genre);
+        }
 
-        return BookDto.from(bookRepository.save(book));
-    }
-
-    @Transactional
-    @Override
-    public BookDto update(Long id, String name, Long authorId, Long genreId) {
-        var genre = genreRepository.findById(genreId).orElseThrow(NotFoundException::new);
-        var author = authorRepository.findById(authorId).orElseThrow(NotFoundException::new);
-
-        var book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
-        book.setName(name);
-        book.setAuthor(author);
-        book.setGenre(genre);
-
-        return BookDto.from(bookRepository.save(book));
+        return BookDto.from(bookRepository.save(bookDomain));
     }
 }
