@@ -36,7 +36,7 @@ public class BookRestController {
     }
 
     @DeleteMapping("/api/v1/book/{id}")
-    ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
+    ResponseEntity<String> deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -83,12 +83,12 @@ public class BookRestController {
     }
 
     @GetMapping("/api/v1/genres")
-    List<GenreDto> genres() {
+    List<GenreDto> getGenres() {
         return genreService.findAll();
     }
 
     @GetMapping("/api/v1/authors")
-    List<AuthorDto> authors() {
+    List<AuthorDto> getAuthors() {
         return authorService.findAll();
     }
 

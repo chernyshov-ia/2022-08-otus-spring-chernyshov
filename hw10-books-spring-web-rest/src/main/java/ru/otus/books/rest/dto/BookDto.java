@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 public class BookDto {
     private Long id;
