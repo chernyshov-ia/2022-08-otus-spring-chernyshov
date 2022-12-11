@@ -1,4 +1,4 @@
-package ru.otus.books.controllers;
+package ru.otus.books.rest;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,8 @@ import ru.otus.books.repositories.GenreRepository;
 
 import java.util.List;
 
-@WebMvcTest()
-class BookControllerTest {
+@WebMvcTest(BookRestController.class)
+class BookRestControllerTest {
     private static final Book BOOK_1 = new Book(1, "Name1", new Author(11, "Author1"), new Genre(22, "Genre1"), List.of());
     private static final String INVALID_NAME = "1";
 

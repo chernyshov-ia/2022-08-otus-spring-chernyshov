@@ -18,4 +18,9 @@ spring:
       schema-locations: classpath:/schema.sql
 
 
+logging:
+  level:
+    org:
+      springframework:
+        web: trace
 

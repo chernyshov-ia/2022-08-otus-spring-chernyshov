@@ -1,4 +1,4 @@
-package ru.otus.books.rest.exceptions;
+package ru.otus.books.exceptions;
 
 public class InvalidAttributeException extends RuntimeException{
     private final String attributeName;

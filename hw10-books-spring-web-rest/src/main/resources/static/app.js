@@ -32,6 +32,7 @@ function closeCard() {
 
     currentBook = null;
 
+    redrawList();
     list.style.display = "block";
 }
 
@@ -93,6 +94,56 @@ function createSelectElement(dictionary, selected) {
     return el;
 }
 
+function addBook() {
+    currentBook = null;
+
+    document.getElementById("book-card-button-delete").style.display = "none";
+    document.getElementById("book-card-button-edit").style.display = "none";
+    document.getElementById("book-card-button-cancel").style.display = "inline";
+    document.getElementById("book-card-button-save").style.display = "inline";
+
+    currentBook = {
+        id: null,
+        name: "Название книги",
+        author: {
+            id: authors[0].id,
+            name: null
+        },
+        genre: {
+            id: genres[0].id,
+            name: null
+        }
+    };
+
+    let el;
+
+    let cellId = document.getElementById("book-card-book-id");
+    cellId.innerHTML = "";
+    cellId.innerText = currentBook.id;
+
+    let cellName = document.getElementById("book-card-book-name");
+    cellName.innerHTML = "";
+    el = document.createElement("input");
+    el.id = "book-card-book-name-input";
+    el.type = "text";
+    el.value = currentBook.name;
+    cellName.appendChild(el);
+
+    let cellAuthor = document.getElementById("book-card-book-author");
+    cellAuthor.innerHTML = "";
+    el = createSelectElement(authors, currentBook.author.id);
+    el.id = "book-card-book-author-select";
+    cellAuthor.appendChild(el);
+
+    let cellGenre = document.getElementById("book-card-book-genre");
+    cellGenre.innerHTML = "";
+    el = createSelectElement(genres, currentBook.genre.id);
+    el.id = "book-card-book-genre-select";
+    cellGenre.appendChild(el);
+
+    list.style.display = "none";
+    card.style.display = "block";
+}
 
 function editBook() {
     if (currentBook == null || currentBook == undefined) {
@@ -137,6 +188,8 @@ function editBook() {
 
 function cancelEditBook() {
     if (currentBook == null || currentBook == undefined) {
+        card.style.display = "none";
+        list.style.display = "block";
         return;
     }
     viewBook(currentBook);
@@ -147,11 +200,74 @@ function saveBook() {
         return;
     }
 
-    if(!confirm("Сохранить изменения?")) {
+    const obj = JSON.parse(JSON.stringify(currentBook));
+
+    const cellName = document.getElementById("book-card-book-name");
+    obj.name = cellName.getElementsByTagName("input")[0].value;
+
+    const cellAuthor = document.getElementById("book-card-book-author");
+    const authorSelect = cellAuthor.getElementsByTagName("select")[0];
+    obj.author.id = authorSelect.options[authorSelect.selectedIndex].id;
+    obj.author.name = authorSelect.options[authorSelect.selectedIndex].text;
+
+
+    let cellGenre = document.getElementById("book-card-book-genre");
+    const genreSelect = cellGenre.getElementsByTagName("select")[0];
+    obj.genre.id = genreSelect.options[genreSelect.selectedIndex].id;
+    obj.genre.name = genreSelect.options[genreSelect.selectedIndex].text;
+
+    // alert(JSON.stringify(obj));
+
+    if (!confirm("Сохранить изменения?")) {
         return;
     }
 
-    viewBook();
+    if (obj.id == null || obj.id == undefined) {
+        fetch("/api/v1/books",
+            {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            })
+            .then(response => response.json())
+            .then(function (data) {
+                console.log('Request succeeded with JSON response', data);
+                let upd = data;
+                books.set(upd.id, upd);
+                currentBook = upd;
+                viewBook();
+            })
+            .catch(function (error) {
+                console.log('Request failed', error);
+                alert("Ошибка сохранения")
+            })
+    } else {
+        fetch(
+        "/api/v1/book/" + obj.id,
+        {
+                method: 'put',
+                body: JSON.stringify(obj),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(function (data) {
+                console.log('Request succeeded with JSON response', data);
+                let upd = data;
+                books.set(upd.id, upd);
+                currentBook = upd;
+                viewBook();
+            })
+            .catch(function (error) {
+                console.log('Request failed', error);
+                alert("Ошибка сохранения")
+            });
+    }
 }
 
 function deleteBook() {
