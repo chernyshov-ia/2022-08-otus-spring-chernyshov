@@ -1,4 +1,4 @@
-package ru.otus.books.controllers;
+package ru.otus.books.exceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

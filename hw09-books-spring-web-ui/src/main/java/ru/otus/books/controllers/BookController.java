@@ -4,91 +4,85 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.otus.books.domain.Book;
-import ru.otus.books.dto.BookCommentDto;
 import ru.otus.books.dto.BookDto;
-import ru.otus.books.repositories.AuthorRepository;
-import ru.otus.books.repositories.BookRepository;
-import ru.otus.books.repositories.GenreRepository;
+import ru.otus.books.exceptions.NotFoundException;
+import ru.otus.books.services.AuthorService;
+import ru.otus.books.services.BookService;
+import ru.otus.books.services.GenreService;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/books")
 public class BookController {
-    private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final GenreRepository genreRepository;
+    private final BookService bookService;
+    private final AuthorService authorService;
+    private final GenreService genreService;
 
-    public BookController(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
-        this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
+    public BookController(BookService bookService, AuthorService authorService, GenreService genreService) {
+        this.bookService = bookService;
+        this.authorService = authorService;
+        this.genreService = genreService;
     }
 
     @GetMapping("")
     public String listPage(Model model) {
-        var books = bookRepository.findAll();
+        var books = bookService.findAll();
         model.addAttribute("books", books);
         return "list";
     }
 
     @RequestMapping("/{id}")
     public String viewPage(@PathVariable("id") Long id, Model model) {
-        var book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
+        var book = bookService.findById(id).orElseThrow(NotFoundException::new);
         model.addAttribute("book", book);
-        var comments = book.getComments().stream()
-                .map(BookCommentDto::fromDomainObject)
-                .collect(Collectors.toList());
-        model.addAttribute("comments", comments);
         return "book";
     }
 
     @PostMapping("/{id}/delete")
     public String deleteBook(@PathVariable("id") Long id) {
-        bookRepository.deleteById(id);
+        bookService.deleteById(id);
         return "redirect:/books";
     }
 
-    @GetMapping( path = {"/{id}/edit", "/new"})
-    public String editPage(@PathVariable( value = "id", required = false) Long id, Model model) {
-        model.addAttribute("authors", authorRepository.findAll());
-        model.addAttribute("genres", genreRepository.findAll());
-        if (id == null) {
-            model.addAttribute("book", BookDto.empty());
-        } else {
-            var book = bookRepository.findById(id).orElseThrow(NotFoundException::new);
-            model.addAttribute("book", BookDto.fromDomainObject(book));
-        }
+    @GetMapping( path = "/{id}/edit")
+    public String editPage(@PathVariable( value = "id", required = true) Long id, Model model) {
+        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("genres", genreService.findAll());
+        var book = bookService.findById(id).orElseThrow(NotFoundException::new);
+        model.addAttribute("book", book);
+
         return "edit";
     }
+
+    @GetMapping( path = "/new")
+    public String newPage(Model model) {
+        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("genres", genreService.findAll());
+        model.addAttribute("book", BookDto.empty());
+
+        return "edit";
+    }
+
 
     @PostMapping("/save")
     public String saveBook(@Valid @ModelAttribute("book") BookDto book, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("authors", authorRepository.findAll());
-            model.addAttribute("genres", genreRepository.findAll());
+            model.addAttribute("authors", authorService.findAll());
+            model.addAttribute("genres", genreService.findAll());
             return "edit";
         }
 
-        var genre = genreRepository.findById(book.getGenreId()).orElseThrow(NotFoundException::new);
-        var author = authorRepository.findById(book.getAuthorId()).orElseThrow(NotFoundException::new);
-
-        Book bookDomain;
+        BookDto newBook;
 
         if (book.getId() == null) {
-            bookDomain = new Book(book.getName(), author, genre);
+            newBook = bookService.create(book.getName(), book.getAuthorId(), book.getAuthorId());
         } else {
-            bookDomain = bookRepository.findById(book.getId()).orElseThrow(NotFoundException::new);
-            bookDomain.setName(book.getName());
-            bookDomain.setAuthor(author);
-            bookDomain.setGenre(genre);
+            newBook = bookService.update(book.getId(), book.getName(), book.getAuthorId(), book.getAuthorId());
         }
-        bookDomain = bookRepository.save(bookDomain);
 
-        return "redirect:/books/" + bookDomain.getId();
+        return "redirect:/books/" + newBook.getId();
     }
 
 }

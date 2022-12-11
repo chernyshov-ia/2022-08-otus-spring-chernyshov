@@ -33,7 +33,7 @@ public class Book {
 
     @BatchSize(size = 10)
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "book")
-    private List<BookComment> comments;
+    private List<BookCommentDto> comments;
 
     public Book(String name, Author author, Genre genre) {
         this.id = 0;
@@ -42,7 +42,7 @@ public class Book {
         this.genre = genre;
     }
 
-    public Book(String name, Author author, Genre genre, List<BookComment> comments) {
+    public Book(String name, Author author, Genre genre, List<BookCommentDto> comments) {
         this.id = 0;
         this.name = name;
         this.author = author;
