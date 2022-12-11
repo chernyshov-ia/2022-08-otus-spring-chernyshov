@@ -12,3 +12,6 @@ insert into books(name, genre_id, author_id) values ( 'The Lord of the Rings', 1
 insert into comments(text, book_id) values ( 'Comment text 1_1', 1 );
 insert into comments(text, book_id) values ( 'Comment text 1_2', 1 );
 insert into comments(text, book_id) values ( 'Comment text 2_1', 2 );
+
+insert into users(username, password) values ('user', 'user');
+insert into users(username, password) values ('admin', 'admin');

@@ -2,5 +2,5 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: testdata.sql
+      data-locations: classpath:testdata.sql
 
