@@ -25,6 +25,7 @@ public class BookServiceImpl implements BookService {
         this.genreRepository = genreRepository;
     }
 
+    @Transactional
     @Override
     public Optional<BookDto> findById(Long id) {
         var book = bookRepository.findById(id);
@@ -34,6 +35,7 @@ public class BookServiceImpl implements BookService {
             return book.map(BookDto::fromWithComments);
         }
     }
+
 
     @Override
     public List<BookDto> findAll() {
