@@ -1,6 +1,7 @@
 package ru.otus.books.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.books.domain.Book;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.exceptions.NotFoundException;
@@ -8,7 +9,6 @@ import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
 import ru.otus.books.repositories.GenreRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ public class BookServiceImpl implements BookService {
         this.genreRepository = genreRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Optional<BookDto> findById(Long id) {
         var book = bookRepository.findById(id);
