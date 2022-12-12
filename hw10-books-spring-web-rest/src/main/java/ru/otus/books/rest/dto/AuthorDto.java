@@ -15,6 +15,10 @@ public class AuthorDto {
     private Long id;
     private String name;
 
+    public AuthorDto(Long id) {
+        this.id = id;
+    }
+
     public static AuthorDto fromDomainObject(Author author) {
         return new AuthorDto(author.getId(), author.getName());
     }

@@ -1,28 +1,27 @@
 package ru.otus.books.rest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.books.exceptions.InvalidAttributeException;
 import ru.otus.books.exceptions.NotFoundException;
-import ru.otus.books.rest.dto.AuthorDto;
-import ru.otus.books.rest.dto.BookDto;
-import ru.otus.books.rest.dto.GenreDto;
-import ru.otus.books.services.AuthorService;
+import ru.otus.books.rest.dto.*;
 import ru.otus.books.services.BookService;
-import ru.otus.books.services.GenreService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class BookRestController {
     private final BookService bookService;
-    private final AuthorService authorService;
-    private final GenreService genreService;
 
-    public BookRestController(BookService bookService, AuthorService authorService, GenreService genreService) {
+    public BookRestController(BookService bookService) {
         this.bookService = bookService;
-        this.authorService = authorService;
-        this.genreService = genreService;
     }
 
     @GetMapping("/api/v1/books")
@@ -30,66 +29,57 @@ public class BookRestController {
         return bookService.findAll();
     }
 
-    @GetMapping("/api/v1/book/{id}")
+    @GetMapping("/api/v1/books/{id}")
     BookDto getBook(@PathVariable("id") Long id) {
         return bookService.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    @DeleteMapping("/api/v1/book/{id}")
+    @DeleteMapping("/api/v1/books/{id}")
     ResponseEntity<String> deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping( path = "/api/v1/book/{id}")
-    BookDto putBook(@PathVariable("id") Long id, @RequestBody BookDto book) {
-
-        if (id == null || id == 0L) {
-            throw new InvalidAttributeException("id", "Id не указано");
-        }
-
-        book.setId(id);
-
-        if (book.getName() == null || book.getName().length() <= 2) {
-            throw new InvalidAttributeException("name", "Имя не указано или слишком короткое");
-        }
-
-        if (book.getAuthor() == null || book.getAuthor().getId() == null) {
-            throw new InvalidAttributeException("author", "Автор не указан");
-        }
-
-        if (book.getGenre() == null || book.getGenre().getId() == null) {
-            throw new InvalidAttributeException("genre", "Жанр не указан");
-        }
+    @PutMapping( path = "/api/v1/books/{id}")
+    BookDto putBook(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BookRequestDto request) {
+        var book = new BookDto().toBuilder()
+                .id(id)
+                .name(request.getName())
+                .author(new AuthorDto(request.getAuthorId()))
+                .genre(new GenreDto(request.getGenreId()))
+                .build();
 
         return bookService.save(book);
     }
 
     @PostMapping(path = "/api/v1/books")
-    BookDto postBook(@RequestBody BookDto book) {
-        if (book.getName() == null || book.getName().length() <= 2) {
-            throw new InvalidAttributeException("name", "Имя не указано или слишком короткое");
-        }
-
-        if (book.getAuthor() == null || book.getAuthor().getId() == null) {
-            throw new InvalidAttributeException("author", "Автор не указан");
-        }
-
-        if (book.getGenre() == null || book.getGenre().getId() == null) {
-            throw new InvalidAttributeException("genre", "Жанр не указан");
-        }
+    BookDto postBook(@Valid @RequestBody BookRequestDto request) {
+        var book = new BookDto().toBuilder()
+                .name(request.getName())
+                .author(new AuthorDto(request.getAuthorId()))
+                .genre(new GenreDto(request.getGenreId()))
+                .build();
 
         return bookService.save(book);
     }
 
-    @GetMapping("/api/v1/genres")
-    List<GenreDto> getGenres() {
-        return genreService.findAll();
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 
-    @GetMapping("/api/v1/authors")
-    List<AuthorDto> getAuthors() {
-        return authorService.findAll();
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidAttributeException.class)
+    public Map<String, String> handleValidationExceptions(InvalidAttributeException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getAttributeName(), ex.getMessage());
+        return errors;
     }
-
 }

@@ -200,21 +200,18 @@ function saveBook() {
         return;
     }
 
-    const obj = JSON.parse(JSON.stringify(currentBook));
+    const obj = {};
 
     const cellName = document.getElementById("book-card-book-name");
     obj.name = cellName.getElementsByTagName("input")[0].value;
 
     const cellAuthor = document.getElementById("book-card-book-author");
     const authorSelect = cellAuthor.getElementsByTagName("select")[0];
-    obj.author.id = authorSelect.options[authorSelect.selectedIndex].id;
-    obj.author.name = authorSelect.options[authorSelect.selectedIndex].text;
-
+    obj.authorId = authorSelect.options[authorSelect.selectedIndex].id;
 
     let cellGenre = document.getElementById("book-card-book-genre");
     const genreSelect = cellGenre.getElementsByTagName("select")[0];
-    obj.genre.id = genreSelect.options[genreSelect.selectedIndex].id;
-    obj.genre.name = genreSelect.options[genreSelect.selectedIndex].text;
+    obj.genreId = genreSelect.options[genreSelect.selectedIndex].id;
 
     // alert(JSON.stringify(obj));
 
@@ -222,7 +219,7 @@ function saveBook() {
         return;
     }
 
-    if (obj.id == null || obj.id == undefined) {
+    if (currentBook.id == null || currentBook.id == undefined) {
         fetch("/api/v1/books",
             {
                 method: 'post',
@@ -232,10 +229,16 @@ function saveBook() {
                 },
                 body: JSON.stringify(obj)
             })
-            .then(response => response.json())
+            .then(function(response) {
+                return  response.json().then(data => ({ 'status': response.status, 'data': data }));
+            })
             .then(function (data) {
-                console.log('Request succeeded with JSON response', data);
-                let upd = data;
+                console.log('Request with JSON response', data);
+                if(data.status==400) {
+                    alert(JSON.stringify(data.data));
+                    return;
+                }
+                let upd = data.data;
                 books.set(upd.id, upd);
                 currentBook = upd;
                 viewBook();
@@ -246,7 +249,7 @@ function saveBook() {
             })
     } else {
         fetch(
-        "/api/v1/book/" + obj.id,
+        "/api/v1/books/" + currentBook.id,
         {
                 method: 'put',
                 body: JSON.stringify(obj),
@@ -255,10 +258,16 @@ function saveBook() {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(function(response) {
+                return  response.json().then(data => ({ 'status': response.status, 'data': data }));
+            })
             .then(function (data) {
-                console.log('Request succeeded with JSON response', data);
-                let upd = data;
+                console.log('Request with JSON response', data);
+                if(data.status==400) {
+                    alert(JSON.stringify(data.data));
+                    return;
+                }
+                let upd = data.data;
                 books.set(upd.id, upd);
                 currentBook = upd;
                 viewBook();
@@ -268,6 +277,8 @@ function saveBook() {
                 alert("Ошибка сохранения")
             });
     }
+
+
 }
 
 function deleteBook() {
@@ -279,7 +290,7 @@ function deleteBook() {
         return;
     }
 
-    fetch("/api/v1/book/" + currentBook.id, {method: 'delete'})
+    fetch("/api/v1/books/" + currentBook.id, {method: 'delete'})
         .then(function (data) {
             console.log('Delete succeeded with JSON response', data);
             closeCard();

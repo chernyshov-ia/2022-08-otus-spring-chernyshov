@@ -15,6 +15,10 @@ public class GenreDto {
     private Long id;
     private String name;
 
+    public GenreDto(Long id) {
+        this.id = id;
+    }
+
     public static GenreDto fromDomainObject(Genre genre) {
         return new GenreDto(genre.getId(), genre.getName());
     }

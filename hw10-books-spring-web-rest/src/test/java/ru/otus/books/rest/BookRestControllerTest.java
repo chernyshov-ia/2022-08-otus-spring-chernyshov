@@ -2,21 +2,19 @@ package ru.otus.books.rest;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.books.rest.dto.AuthorDto;
 import ru.otus.books.rest.dto.BookDto;
+import ru.otus.books.rest.dto.BookRequestDto;
 import ru.otus.books.rest.dto.GenreDto;
 import ru.otus.books.services.AuthorService;
 import ru.otus.books.services.BookService;
 import ru.otus.books.services.GenreService;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +22,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 
@@ -80,7 +79,7 @@ class BookRestControllerTest {
     @Test
     void getBook() throws Exception {
         given(bookService.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
-        this.mvc.perform(get("/api/v1/book/{id}", BOOK_1.getId()))
+        this.mvc.perform(get("/api/v1/books/{id}", BOOK_1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(BOOK_1)));
@@ -91,7 +90,7 @@ class BookRestControllerTest {
     void deleteBook() throws Exception {
         given(bookService.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
 
-        this.mvc.perform(delete("/api/v1/book/{id}", BOOK_1.getId()))
+        this.mvc.perform(delete("/api/v1/books/{id}", BOOK_1.getId()))
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(BOOK_1.getId());
@@ -102,16 +101,24 @@ class BookRestControllerTest {
 
         var bookWithChanges = BOOK_1.toBuilder()
                 .name(NEW_NAME)
-                .author(AUTHOR_2)
-                .genre(GENRE_2)
+                .author(new AuthorDto(AUTHOR_2.getId()))
+                .genre(new GenreDto(GENRE_2.getId()))
+                .build();
+
+        var payload = BookRequestDto.builder()
+                .name(bookWithChanges.getName())
+                .authorId(bookWithChanges.getAuthor().getId())
+                .genreId(bookWithChanges.getGenre().getId())
                 .build();
 
         given(bookService.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
         given(bookService.save(any())).willReturn(bookWithChanges);
 
+
+
         this.mvc.perform(
-                put("/api/v1/book/{id}", BOOK_1.getId())
-                        .content(mapper.writeValueAsString(bookWithChanges))
+                put("/api/v1/books/{id}", BOOK_1.getId())
+                        .content(mapper.writeValueAsString(payload))
                         .contentType("application/json")
                 )
                 .andExpect(status().isOk())
@@ -123,13 +130,25 @@ class BookRestControllerTest {
 
     @Test
     void postBook() throws Exception {
-        var bookNew = BOOK_2.toBuilder().id(null).build();
+        var payload = BookRequestDto.builder()
+                .name(BOOK_2.getName())
+                .authorId(BOOK_2.getAuthor().getId())
+                .genreId(BOOK_2.getGenre().getId())
+                .build();
+
+
+        var bookNew = BookDto.builder()
+                .name(payload.getName())
+                .author( new AuthorDto(payload.getAuthorId()))
+                .genre(new GenreDto(payload.getGenreId()))
+                .build();
+
 
         given(bookService.save(any())).willReturn(BOOK_2);
 
         this.mvc.perform(
                         post("/api/v1/books")
-                                .content(mapper.writeValueAsString(bookNew))
+                                .content(mapper.writeValueAsString(payload))
                                 .contentType("application/json")
                 )
                 .andExpect(status().isOk())
@@ -137,29 +156,5 @@ class BookRestControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(BOOK_2)));
 
         verify(bookService).save(bookNew);
-    }
-
-    @Test
-    void getGenres() throws Exception {
-        var list = List.of(GENRE_1, GENRE_2);
-
-        given(genreService.findAll()).willReturn(list);
-
-        this.mvc.perform(get("/api/v1/genres"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(mapper.writeValueAsString(list)));
-    }
-
-    @Test
-    void getAuthors() throws Exception {
-        var list = List.of(AUTHOR_1, AUTHOR_2);
-
-        given(authorService.findAll()).willReturn(list);
-
-        this.mvc.perform(get("/api/v1/authors"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(mapper.writeValueAsString(list)));
     }
 }
