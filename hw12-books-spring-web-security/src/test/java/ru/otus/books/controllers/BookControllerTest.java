@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,6 +67,12 @@ class BookControllerTest {
     }
 
     @Test
+    void shouldUnauthenticatedWhenGetBooks() throws Exception {
+        this.mvc.perform(get("/books")).andExpect(unauthenticated());
+    }
+
+
+    @Test
     @WithMockUser(username = "user")
     void shouldReturnCorrectBookAndViewById() throws Exception {
         given(bookService.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
@@ -74,6 +81,12 @@ class BookControllerTest {
                 .andExpect(view().name("book"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldUnauthenticatedWhenGetBook() throws Exception {
+        this.mvc.perform(get("/books/{id}", BOOK_1.getId())).andExpect(unauthenticated());
+    }
+
 
     @Test
     @WithMockUser(username = "user")
@@ -88,6 +101,12 @@ class BookControllerTest {
     }
 
     @Test
+    void shouldUnauthenticatedWhenDeleteBook() throws Exception {
+        this.mvc.perform(post("/books/{id}/delete", BOOK_1.getId())).andExpect(unauthenticated());
+    }
+
+
+    @Test
     @WithMockUser(username = "user")
     void shouldReturnEditViewAndBookById() throws Exception {
         given(bookService.findById(BOOK_1.getId())).willReturn(Optional.of(BOOK_1));
@@ -99,11 +118,21 @@ class BookControllerTest {
     }
 
     @Test
+    void shouldUnauthenticatedWhenEditBookPage() throws Exception {
+        this.mvc.perform(get("/books/{id}/edit", BOOK_1.getId())).andExpect(unauthenticated());
+    }
+
+    @Test
     @WithMockUser(username = "user")
     void shouldReturnEditViewWhenCreatingBook() throws Exception {
         this.mvc.perform(get("/books/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("edit"));
+    }
+
+    @Test
+    void shouldUnauthenticatedWhenNewBookPage() throws Exception {
+        this.mvc.perform(get("/books/new")).andExpect(unauthenticated());
     }
 
     @Test
@@ -131,6 +160,12 @@ class BookControllerTest {
                         .build()
         );
     }
+
+    @Test
+    void shouldUnauthenticatedWhenSaveBook() throws Exception {
+        this.mvc.perform(post("/books/save")).andExpect(unauthenticated());
+    }
+
 
     @Test
     @WithMockUser(username = "user")
