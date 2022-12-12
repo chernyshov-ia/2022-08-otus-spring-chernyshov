@@ -21,11 +21,6 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
-    @BeforeEach
-    private  void setUp() {
-        repository.save(new User(null,"user","user"));
-    }
-
     @DisplayName("должен возвращать пользователя по имени")
     @Test
     void shouldReturnExistingUserByUsername() {
