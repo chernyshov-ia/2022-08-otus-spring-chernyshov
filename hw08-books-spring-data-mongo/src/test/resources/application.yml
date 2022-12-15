@@ -1,0 +1,14 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+
+  data:
+    mongodb:
+      database: test
+      port: 0
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.books.mongock.testdata

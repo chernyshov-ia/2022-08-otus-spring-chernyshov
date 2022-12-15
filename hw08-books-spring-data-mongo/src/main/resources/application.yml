@@ -1,0 +1,20 @@
+spring:
+  banner:
+    location: banner.txt
+
+  data:
+    mongodb:
+      database: otus
+      host: 127.0.0.1
+      port: 27018
+      username: user
+      password: password
+      authentication-database: admin
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.books.mongock.changelog
+
+
+
