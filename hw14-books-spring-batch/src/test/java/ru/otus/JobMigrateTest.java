@@ -37,6 +37,7 @@ public class JobMigrateTest {
             new DestinationBook(3, "Book 3", 2, 2)
     );
 
+
     @Autowired
     DestinationBookRepository repo;
 
