@@ -210,7 +210,6 @@ public class JobConfig {
                 .start(prepareStep)
                 .next(loadAuthorsStep)
                 .next(loadGenresStep)
-                .next(loadGenresStep)
                 .next(loadBooksStep)
                 .next(migrateStep)
                 .next(cleanUpStep)
