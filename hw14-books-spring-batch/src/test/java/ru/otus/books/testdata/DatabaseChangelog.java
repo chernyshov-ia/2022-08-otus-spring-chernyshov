@@ -13,6 +13,7 @@ import ru.otus.books.repositories.GenreRepository;
 @ChangeLog
 public class DatabaseChangelog {
 
+
     @ChangeSet(order = "001", id = "dropDb", author = "chernyshov", runAlways = true)
     public void dropDb(MongoDatabase db) {
         db.drop();
@@ -20,28 +21,28 @@ public class DatabaseChangelog {
 
     @ChangeSet(order = "002", id = "insertGenres", author = "chernyshov")
     public void insertGenres(GenreRepository repository) {
-        repository.save(new Genre("G1", "fantasy"));
-        repository.save(new Genre("G2", "novel"));
+        repository.save(new Genre("G1", "Genre 1"));
+        repository.save(new Genre("G2", "Genre 2"));
     }
 
     @ChangeSet(order = "003", id = "insertAuthors", author = "chernyshov")
     public void insertAuthors(AuthorRepository repository) {
-        repository.save(new Author("A1", "Arthur Conan Doyle"));
-        repository.save(new Author("A2", "Jack London"));
-        repository.save(new Author("A3", "John Ronald Reuel Tolkien"));
+        repository.save(new Author("A1", "Author 1"));
+        repository.save(new Author("A2", "Author 2"));
+        repository.save(new Author("A3", "Author 3"));
     }
 
     @ChangeSet(order = "004", id = "insertBooks", author = "chernyshov")
     public void insertBooks(BookRepository bookRepo, GenreRepository genreRepo, AuthorRepository authorRepo) {
-        Genre genreFantasy = genreRepo.findById("G1").orElseThrow();
-        Genre genreNovel = genreRepo.findById("G2").orElseThrow();
+        Genre g1 = genreRepo.findById("G1").orElseThrow();
+        Genre g2 = genreRepo.findById("G2").orElseThrow();
 
-        Author authorJackLondon = authorRepo.findById("A2").orElseThrow();
-        Author authorTolkien = authorRepo.findById("A3").orElseThrow();
+        Author a2 = authorRepo.findById("A2").orElseThrow();
+        Author a3 = authorRepo.findById("A3").orElseThrow();
 
-        bookRepo.save(new Book("B1", "Hobbit", authorTolkien, genreFantasy ));
-        bookRepo.save(new Book("B2", "The Lord of the Rings", authorTolkien, genreFantasy ));
-        bookRepo.save(new Book("B3", "White Fang", authorJackLondon, genreNovel ));
+        bookRepo.save(new Book("B1", "Book 1", a3, g1 ));
+        bookRepo.save(new Book("B2", "Book 2", a3, g1 ));
+        bookRepo.save(new Book("B3", "Book 3", a2, g2 ));
     }
 
 }

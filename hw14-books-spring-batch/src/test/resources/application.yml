@@ -1,0 +1,41 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+
+  data:
+    mongodb:
+      database: test
+      port: 0
+
+  batch:
+    jdbc:
+      initialize-schema: always
+
+    job:
+      enabled: false
+
+  jpa:
+    generate-ddl: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  mongodb:
+    embedded:
+      version: 4.4.0
+
+mongock:
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.books.mongock.testdata
+
+
+logging:
+  level:
+    root: INFO
+    com.github.dockerjava: ERROR
