@@ -32,7 +32,7 @@ mongock:
     read-concern: local
   runner-type: "InitializingBean"
   change-logs-scan-package:
-    - ru.otus.books.mongock.testdata
+    - ru.otus.books.testdata
 
 
 logging:

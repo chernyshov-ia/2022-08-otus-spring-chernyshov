@@ -79,6 +79,8 @@ public class JobMigrateTest {
         List<DestinationBook> all = repo.findAll();
 
         assertEquals(3, all.size());
+
+        assertThat(all).usingRecursiveComparison().isEqualTo(expectedBooks);
     }
 
 }
