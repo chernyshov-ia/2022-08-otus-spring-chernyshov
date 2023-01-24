@@ -1,0 +1,39 @@
+spring:
+  banner:
+    location: banner.txt
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  sql:
+    init:
+      mode: never
+
+  data:
+    mongodb:
+      database: otus
+      host: 127.0.0.1
+      port: 27018
+      username: user
+      password: password
+      authentication-database: admin
+
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    password: postgres
+    username: postgres
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.books.mongock.changelog
+
+
