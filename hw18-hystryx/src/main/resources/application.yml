@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  banner:
+    location: banner.txt
+  datasource:
+    url: jdbc:h2:mem:testdb
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:/data.sql
+      schema-locations: classpath:/schema.sql
+
+
+logging:
+  level:
+    org:
+      springframework:
+        web: trace
+
