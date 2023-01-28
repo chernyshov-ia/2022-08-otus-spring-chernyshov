@@ -23,3 +23,4 @@ __Заметки по выполнению__
 
 http://localhost:8080/actuator/metrics/disk.free
 http://localhost:8080/actuator
+http://localhost:8080/actuator/health/books
