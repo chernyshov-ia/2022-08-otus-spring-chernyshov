@@ -21,6 +21,7 @@ import ru.otus.services.TaskProcessor;
 @IntegrationComponentScan(basePackageClasses = TaskProcessor.class)
 public class IntegrationFlowConfig {
 
+
     private final InstructionService instructionService;
 
     public IntegrationFlowConfig(InstructionService instructionService) {
@@ -54,7 +55,6 @@ public class IntegrationFlowConfig {
                                         sf -> sf.transform(Task::getParams)
                                                 .handle(instructionService, "uppercase")
                                                 .channel(resultChannel())
-
                                 )
                                 .subFlowMapping(
                                         Instruction.REVERSE_WORDS,
