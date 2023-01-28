@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class IntegrationFlowTest {
-    public static final String STRING_1 = "abc";
-    public static final String STRING_2 = "123,456";
-    public static final String STRING_2_PROCESSED = "321,654";
+    private static final String STRING_1 = "abc";
+    private static final String STRING_2 = "123,456";
+    private static final String STRING_2_PROCESSED = "321,654";
 
     @Autowired
     TaskProcessor processor;

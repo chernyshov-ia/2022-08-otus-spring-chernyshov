@@ -13,12 +13,20 @@ import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.scheduling.PollerMetadata;
 import ru.otus.domain.Instruction;
 import ru.otus.domain.Task;
+import ru.otus.services.InstructionService;
 import ru.otus.services.TaskProcessor;
 
 @Configuration
 @EnableIntegration
 @IntegrationComponentScan(basePackageClasses = TaskProcessor.class)
 public class IntegrationFlowConfig {
+
+
+    private final InstructionService instructionService;
+
+    public IntegrationFlowConfig(InstructionService instructionService) {
+        this.instructionService = instructionService;
+    }
 
     @Bean
     public QueueChannel taskChannel() {
@@ -38,27 +46,25 @@ public class IntegrationFlowConfig {
 
     @Bean
     public IntegrationFlow taskFlow() {
-        return IntegrationFlows.from("taskChannel")
+        return IntegrationFlows.from(taskChannel())
                 .<Task, Instruction>route(
                         Task::getInstruction,
                         mapping -> mapping
                                 .subFlowMapping(
                                         Instruction.UPPERCASE,
                                         sf -> sf.transform(Task::getParams)
-                                                .handle("instructionService", "uppercase")
-                                                .channel("resultChannel")
-
+                                                .handle(instructionService, "uppercase")
+                                                .channel(resultChannel())
                                 )
                                 .subFlowMapping(
                                         Instruction.REVERSE_WORDS,
                                         sf -> sf.transform(Task::getParams)
                                                 .split(f -> f.delimiters(","))
-                                                .handle("instructionService", "reverse")
+                                                .handle(instructionService, "reverse")
                                                 .aggregate()
-                                                .channel("resultChannel")
+                                                .channel(resultChannel())
                                 )
                 )
                 .get();
     }
-
 }
