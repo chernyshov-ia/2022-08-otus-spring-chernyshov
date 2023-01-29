@@ -1,5 +1,6 @@
 package ru.otus.books.services;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Service;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.rest.dto.AuthorDto;
@@ -16,17 +17,28 @@ public class AuthorServiceImpl implements AuthorService {
         this.repository = repository;
     }
 
+    @HystrixCommand(commandKey = "findAuthorById", fallbackMethod = "emptyAuthorDtoOptionalFallback")
     @Override
     public Optional<AuthorDto> findById(Long id) {
         return repository.findById(id)
                 .map(AuthorDto::fromDomainObject);
     }
 
+    private Optional<AuthorDto> emptyAuthorDtoOptionalFallback() {
+        return Optional.empty();
+    }
+
+    @HystrixCommand(commandKey = "findAllAuthors", fallbackMethod = "noAuthorsDtoFallback")
     @Override
     public List<AuthorDto> findAll() {
         return repository.findAll().stream()
                 .map(AuthorDto::fromDomainObject)
                 .collect(Collectors.toList());
     }
+
+    private List<AuthorDto> noAuthorsDtoFallback() {
+        return List.of();
+    }
+
 
 }

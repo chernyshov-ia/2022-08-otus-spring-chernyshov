@@ -17,6 +17,29 @@ spring:
       data-locations: classpath:/data.sql
       schema-locations: classpath:/schema.sql
 
+hystrix:
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 3
+        errorThresholdPercentage: 50
+        sleepWindowInMilliseconds: 3000
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000
+      metrics:
+        rollingStats:
+          timeInMilliseconds: 10000
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
 
 logging:
   level:

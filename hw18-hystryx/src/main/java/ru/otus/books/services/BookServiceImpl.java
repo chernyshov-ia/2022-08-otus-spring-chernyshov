@@ -1,12 +1,15 @@
 package ru.otus.books.services;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Service;
 import ru.otus.books.domain.Book;
 import ru.otus.books.exceptions.NotFoundException;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
 import ru.otus.books.repositories.GenreRepository;
+import ru.otus.books.rest.dto.AuthorDto;
 import ru.otus.books.rest.dto.BookDto;
+import ru.otus.books.rest.dto.GenreDto;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -25,6 +28,7 @@ public class BookServiceImpl implements BookService {
         this.genreRepository = genreRepository;
     }
 
+    @HystrixCommand(commandKey = "findBookById", fallbackMethod = "emptyBookDtoOptionalFallback")
     @Override
     public Optional<BookDto> findById(Long id) {
         var book = bookRepository.findById(id);
@@ -35,6 +39,11 @@ public class BookServiceImpl implements BookService {
         }
     }
 
+    private Optional<BookDto> emptyBookDtoOptionalFallback() {
+        return Optional.empty();
+    }
+
+    @HystrixCommand(commandKey = "findAllBooks", fallbackMethod = "noBooksDtoFallback")
     @Override
     public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
@@ -42,12 +51,19 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
     }
 
+    private List<BookDto> noBooksDtoFallback() {
+        return List.of();
+    }
+
+    @HystrixCommand(commandKey = "deleteBookById")
     @Transactional
     @Override
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
     }
 
+    @HystrixCommand(commandKey = "saveBook",
+            fallbackMethod = "saveFallback")
     @Transactional
     @Override
     public BookDto save(BookDto book) {
@@ -77,5 +93,9 @@ public class BookServiceImpl implements BookService {
         }
 
         return BookDto.fromDomainObject(bookRepository.save(bookDomain));
+    }
+
+    public BookDto saveFallback() {
+        return new BookDto(0L, "", new AuthorDto(0L, ""), new GenreDto(0L, ""));
     }
 }
