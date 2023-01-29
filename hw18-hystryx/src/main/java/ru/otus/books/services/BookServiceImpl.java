@@ -14,6 +14,7 @@ import ru.otus.books.rest.dto.GenreDto;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,9 +47,20 @@ public class BookServiceImpl implements BookService {
     @HystrixCommand(commandKey = "findAllBooks", fallbackMethod = "noBooksDtoFallback")
     @Override
     public List<BookDto> findAll() {
+
+        sleep(2000);
+
         return bookRepository.findAll().stream()
                 .map(BookDto::fromDomainObject)
                 .collect(Collectors.toList());
+    }
+
+    private void sleep(int m) {
+        int i = ThreadLocalRandom.current().nextInt(m);
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+        }
     }
 
     private List<BookDto> noBooksDtoFallback() {
