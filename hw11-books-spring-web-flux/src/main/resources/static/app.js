@@ -41,7 +41,7 @@ function openCard(obj) {
     if (obj == null || obj == undefined) {
         return;
     }
-    const bookId = parseInt(obj.getAttribute("book-id"));
+    const bookId = obj.getAttribute("book-id");
     console.log("Opening card - bookId: " + bookId);
     currentBook = books.get(bookId);
 

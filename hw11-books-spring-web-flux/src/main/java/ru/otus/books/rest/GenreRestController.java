@@ -2,11 +2,9 @@ package ru.otus.books.rest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import ru.otus.books.repositories.GenreRepository;
 import ru.otus.books.rest.dto.GenreDto;
-
-import java.util.List;
 
 @RestController
 public class GenreRestController {
@@ -17,9 +15,8 @@ public class GenreRestController {
     }
 
     @GetMapping("/api/v1/genres")
-    Mono<List<GenreDto>> getGenres() {
+    Flux<GenreDto> getGenres() {
         return repository.findAll()
-                .map(GenreDto::fromDomainObject)
-                .collectList();
+                .map(GenreDto::fromDomainObject);
     }
 }

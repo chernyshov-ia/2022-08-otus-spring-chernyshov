@@ -21,4 +21,8 @@ public class Genre {
     public String toString() {
         return String.format("%s. %s", getId(), getName());
     }
+
+    public Genre(String id) {
+        this.id = id;
+    }
 }

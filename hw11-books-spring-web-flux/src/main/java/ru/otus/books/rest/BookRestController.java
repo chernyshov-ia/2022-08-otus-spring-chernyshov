@@ -5,40 +5,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.otus.books.domain.Author;
 import ru.otus.books.domain.Book;
+import ru.otus.books.domain.Genre;
 import ru.otus.books.exceptions.InvalidAttributeException;
-import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
-import ru.otus.books.repositories.GenreRepository;
-import ru.otus.books.rest.dto.AuthorDto;
 import ru.otus.books.rest.dto.BookDto;
 import ru.otus.books.rest.dto.BookRequestDto;
-import ru.otus.books.rest.dto.GenreDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 public class BookRestController {
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final GenreRepository genreRepository;
 
-    public BookRestController(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
+    public BookRestController(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.genreRepository = genreRepository;
     }
 
     @GetMapping("/api/v1/books")
-    Mono<List<BookDto>> books() {
+    Flux<BookDto> books() {
         return bookRepository.findAll()
-                .map(BookDto::fromDomainObject)
-                .collectList();
+                .map(BookDto::fromDomainObject);
     }
 
     @GetMapping("/api/v1/books/{id}")
@@ -46,7 +39,7 @@ public class BookRestController {
         return bookRepository.findById(id)
                 .map(BookDto::fromDomainObject)
                 .map(ResponseEntity::ok)
-                .switchIfEmpty(Mono.fromCallable(() -> ResponseEntity.notFound().build()));
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/api/v1/books/{id}")
@@ -56,30 +49,29 @@ public class BookRestController {
     }
 
     @PutMapping(path = "/api/v1/books/{id}")
-    Mono<BookDto> putBook(@NotNull @PathVariable("id") String id, @Valid @RequestBody BookRequestDto request) {
-
-        var genreMono = genreRepository.findById(request.getGenreId());
-        var authorMono = authorRepository.findById(request.getAuthorId());
-
-
-        Mono<Book> book = Mono.zip(genreMono, authorMono, (genre, author) -> new Book(request.getName(), author, genre));
-
-
-//                .map(bookRepository::save);
-//                .map(this::toDto);
-
-
+    Mono<ResponseEntity<BookDto>> putBook(@NotNull @PathVariable("id") String id, @Valid @RequestBody BookRequestDto request) {
+        return bookRepository
+                .findById(id)
+                .map(b -> {
+                    b.setName(request.getName());
+                    b.setGenre(new Genre(request.getGenreId()));
+                    b.setAuthor(new Author(request.getAuthorId()));
+                    return b;
+                })
+                .flatMap(bookRepository::save)
+                .flatMap(b -> bookRepository.findById(b.getId()))
+                .map(BookDto::fromDomainObject)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping(path = "/api/v1/books")
-    BookDto postBook(@Valid @RequestBody BookRequestDto request) {
-        var book = new BookDto().toBuilder()
-                .name(request.getName())
-                .author(new AuthorDto(request.getAuthorId()))
-                .genre(new GenreDto(request.getGenreId()))
-                .build();
-
-        //    return bookService.save(book);
+    Mono<ResponseEntity<BookDto>> postBook(@Valid @RequestBody BookRequestDto request) {
+        var book = new Book(null, request.getName(), new Author(request.getAuthorId()), new Genre(request.getGenreId()));
+        return bookRepository.save(book)
+                .flatMap(b -> bookRepository.findById(b.getId()))
+                .map(BookDto::fromDomainObject)
+                .map(ResponseEntity::ok);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -92,12 +84,6 @@ public class BookRestController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }
-
-    BookDto toDto(Book book) {
-        return new BookDto(book.getId(), book.getName(),
-                AuthorDto.fromDomainObject(book.getAuthor()),
-                GenreDto.fromDomainObject(book.getGenre()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -2,11 +2,9 @@ package ru.otus.books.rest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.rest.dto.AuthorDto;
-
-import java.util.List;
 
 @RestController
 public class AuthorRestController {
@@ -17,9 +15,8 @@ public class AuthorRestController {
     }
 
     @GetMapping("/api/v1/authors")
-    Mono<List<AuthorDto>> getAuthors() {
+    Flux<AuthorDto> getAuthors() {
         return repository.findAll()
-                .map(AuthorDto::fromDomainObject)
-                .collectList();
+                .map(AuthorDto::fromDomainObject);
     }
 }

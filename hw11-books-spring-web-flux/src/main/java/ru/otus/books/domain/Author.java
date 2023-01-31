@@ -22,4 +22,8 @@ public class Author {
     public String toString() {
         return String.format("%s. %s", getId(), getName());
     }
+
+    public Author(String id) {
+        this.id = id;
+    }
 }
