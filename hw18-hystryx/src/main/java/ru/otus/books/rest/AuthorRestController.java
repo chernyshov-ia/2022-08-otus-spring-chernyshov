@@ -1,5 +1,6 @@
 package ru.otus.books.rest;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.books.rest.dto.AuthorDto;
@@ -15,8 +16,13 @@ public class AuthorRestController {
         this.authorService = authorService;
     }
 
+    @HystrixCommand(commandKey = "findAllAuthors", fallbackMethod = "noAuthorsDtoFallback")
     @GetMapping("/api/v1/authors")
     List<AuthorDto> getAuthors() {
         return authorService.findAll();
+    }
+
+    private List<AuthorDto> noAuthorsDtoFallback() {
+        return List.of();
     }
 }
