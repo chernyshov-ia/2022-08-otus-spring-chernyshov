@@ -2,10 +2,8 @@ package ru.otus.books.services;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.otus.books.rest.dto.BookDto;
-import ru.otus.books.rest.dto.BookRequestDto;
 
 import java.util.List;
 import java.util.Optional;

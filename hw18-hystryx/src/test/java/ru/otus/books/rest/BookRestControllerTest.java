@@ -12,9 +12,7 @@ import ru.otus.books.rest.dto.AuthorDto;
 import ru.otus.books.rest.dto.BookDto;
 import ru.otus.books.rest.dto.BookRequestDto;
 import ru.otus.books.rest.dto.GenreDto;
-import ru.otus.books.services.AuthorService;
-import ru.otus.books.services.BookService;
-import ru.otus.books.services.GenreService;
+import ru.otus.books.services.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +54,7 @@ class BookRestControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    @Qualifier("bookService")
-    private BookService bookService;
+    private CircuitBreakerBookService bookService;
 
     @MockBean
     private GenreService genreService;
