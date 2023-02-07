@@ -1,5 +1,6 @@
 package ru.otus.books.services;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.otus.books.domain.Book;
 import ru.otus.books.exceptions.NotFoundException;
@@ -15,6 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
+@Qualifier("bookService")
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -36,15 +38,17 @@ public class BookServiceImpl implements BookService {
         }
     }
 
+
     @Override
     public List<BookDto> findAll() {
-
-        sleep(2000);
-
+        sleep(1500);
         return bookRepository.findAll().stream()
                 .map(BookDto::fromDomainObject)
                 .collect(Collectors.toList());
     }
+
+
+
 
     private void sleep(int m) {
         int i = ThreadLocalRandom.current().nextInt(m);

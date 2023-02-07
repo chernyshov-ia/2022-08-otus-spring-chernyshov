@@ -1,6 +1,6 @@
 package ru.otus.books.rest;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,43 +22,38 @@ import java.util.Map;
 @RestController
 public class BookRestController {
     private final BookService bookService;
-    private final ResponseEntity serviceUnavailable =  ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+    private final ResponseEntity<BookDto> serviceUnavailable =  ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
-    public BookRestController(BookService bookService) {
+    public BookRestController(@Qualifier("circuitBreakerBookService") BookService bookService) {
         this.bookService = bookService;
     }
 
-    @HystrixCommand(commandKey = "findAllBooks", fallbackMethod = "noBooksDtoFallback")
     @GetMapping("/api/v1/books")
     List<BookDto> books() {
         return bookService.findAll();
     }
 
-    private List<BookDto> noBooksDtoFallback() {
-        return List.of();
-    }
 
-
-    @HystrixCommand(commandKey = "findBookById", fallbackMethod = "getBookFallback")
     @GetMapping("/api/v1/books/{id}")
     ResponseEntity<BookDto> getBook(@PathVariable("id") Long id) {
+        var optionalBook = bookService.findById(id);
+
+        if (optionalBook == null) {
+            return serviceUnavailable;
+        }
+
         return bookService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    ResponseEntity<BookDto> getBookFallback(Long id) {
-        return serviceUnavailable;
-    }
 
-    @HystrixCommand(commandKey = "deleteBookById")
     @DeleteMapping("/api/v1/books/{id}")
     ResponseEntity<String> deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    @HystrixCommand(commandKey = "updateBook", fallbackMethod = "getPutBookFallback")
     @PutMapping( path = "/api/v1/books/{id}")
     ResponseEntity<BookDto> putBook(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BookRequestDto request) {
         var book = new BookDto().toBuilder()
@@ -71,12 +66,7 @@ public class BookRestController {
         return ResponseEntity.ok(bookService.save(book));
     }
 
-    ResponseEntity<BookDto> getPutBookFallback(Long id, BookRequestDto request) {
-        return serviceUnavailable;
-    }
 
-
-    @HystrixCommand(commandKey = "postBook", fallbackMethod = "getPostBookFallback")
     @PostMapping(path = "/api/v1/books")
     ResponseEntity<BookDto> postBook(@Valid @RequestBody BookRequestDto request) {
         var book = new BookDto().toBuilder()
@@ -88,9 +78,6 @@ public class BookRestController {
         return ResponseEntity.ok(bookService.save(book));
     }
 
-    ResponseEntity<BookDto> getPostBookFallback(BookRequestDto request) {
-        return serviceUnavailable;
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

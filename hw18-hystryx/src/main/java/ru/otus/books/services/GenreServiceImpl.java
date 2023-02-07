@@ -1,5 +1,6 @@
 package ru.otus.books.services;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Service;
 import ru.otus.books.repositories.GenreRepository;
 import ru.otus.books.rest.dto.GenreDto;
@@ -25,6 +26,7 @@ public class GenreServiceImpl implements GenreService {
         return Optional.empty();
     }
 
+    @HystrixCommand(commandKey = "findAllGenres", fallbackMethod = "noGenresDtoFallback")
     @Override
     public List<GenreDto> findAll() {
         return repository.findAll().stream()
@@ -32,6 +34,8 @@ public class GenreServiceImpl implements GenreService {
                 .collect(Collectors.toList());
     }
 
-
+    private List<GenreDto> noGenresDtoFallback() {
+        return List.of();
+    }
 
 }
