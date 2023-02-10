@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      database: test
+      port: 0
+
+  mongodb:
+    embedded:
+      version: 4.4.0
+
+mongock:
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.books.mongock.testchangelog
+
+
+
+logging:
+  level:
+    org:
+      springframework:
+        web: trace
+
