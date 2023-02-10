@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GenreService {
-    Optional<GenreDto> findById(Long id);
     List<GenreDto> findAll();
 }

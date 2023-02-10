@@ -17,15 +17,6 @@ public class GenreServiceImpl implements GenreService {
         this.repository = repository;
     }
 
-    @Override
-    public Optional<GenreDto> findById(Long id) {
-        return repository.findById(id).map(GenreDto::fromDomainObject);
-    }
-
-    private Optional<GenreDto> emptyGenreDtoOptionalFallback() {
-        return Optional.empty();
-    }
-
     @HystrixCommand(commandKey = "findAllGenres", fallbackMethod = "noGenresDtoFallback")
     @Override
     public List<GenreDto> findAll() {
