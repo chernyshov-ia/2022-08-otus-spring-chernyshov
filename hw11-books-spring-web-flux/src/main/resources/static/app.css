@@ -1,0 +1,42 @@
+
+.books {
+    border: 1px solid steelblue;
+    width: 800px;
+    border-collapse: collapse;
+}
+
+.books tr td, th {
+    padding: 5px;
+    border: 1px solid steelblue;
+    width: auto;
+}
+
+body {
+    padding: 2px;
+    padding-left: 30px;
+}
+
+.row {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#book-card {
+    display: none;
+    margin: 0;
+    padding-top: 30px;
+    padding-left: 30px;
+    width: 800px;
+}
+
+#book-card table {
+    border: 1px solid steelblue;
+    width: 500px;
+    border-collapse: collapse;
+}
+
+#book-card tr td, th {
+    padding: 5px;
+    border: 1px solid steelblue;
+    width: auto;
+}
